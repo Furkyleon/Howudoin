@@ -10,6 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 public class Group {
     private int id;
-    private String name;
-    private List<String> memberIds;
+    private String groupName;
+    private List<String> membersNickname;
 }

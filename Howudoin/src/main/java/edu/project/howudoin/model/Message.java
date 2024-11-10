@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Message {
     private int id;
-    private int senderId;
-    private int receiverId;
+    private String senderNickname;
+    private String receiverNickname;
     private String content;
 }
