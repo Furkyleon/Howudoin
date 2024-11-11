@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FriendRequest {
     private int id;
-    private int senderId;
-    private int receiverId;
+    private User sender;
+    private User receiver;
     private boolean isAccepted;
 }

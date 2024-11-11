@@ -22,18 +22,32 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    public User getUser(int id) {
+        return userRepository.findById(id).get();
+    }
+
     public List<User> getUsers() {
         return userRepository.findAll();
     }
 
     public void addFriend(FriendRequest request){
-        int senderId = request.getSenderId();
-        int receiverId = request.getReceiverId();
-        User sender = userRepository.findById(senderId).get();
-        User receiver = userRepository.findById(receiverId).get();
-        sender.getFriendsId().add(receiverId);
-        receiver.getFriendsId().add(senderId);
+        User sender = request.getSender();
+        User receiver = request.getReceiver();
+
+        sender.getFriends().add(receiver);
+        receiver.getFriends().add(sender);
+
         userRepository.save(sender);
         userRepository.save(receiver);
+    }
+
+    public void login(String email, String password) {
+        // login authentication
+        System.out.println("Succesfully logined");
+    }
+
+    public List<User> getFriends(int userId){
+        User user = userRepository.findById(userId).get();
+        return user.getFriends();
     }
 }

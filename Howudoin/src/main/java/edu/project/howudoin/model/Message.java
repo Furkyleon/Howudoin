@@ -8,10 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Message {
-    private int id;
-    private int senderId;
-    private int receiverId;
+    private User sender;
+    private User receiver;
     private String content;
-    private long timestamp;
-
 }

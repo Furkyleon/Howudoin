@@ -1,6 +1,7 @@
 package edu.project.howudoin.controller;
 
 
+import edu.project.howudoin.model.Message;
 import edu.project.howudoin.model.User;
 import edu.project.howudoin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +15,18 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PutMapping("/createuser/{id}/{nickname}/{name}/{lastname}/{email}/{password}")
-    public void createUser(@PathVariable("id") int id,
-                           @PathVariable("nickname") String nickname,
-                           @PathVariable("name") String name,
-                           @PathVariable("lastname") String surname,
-                           @PathVariable("email") String email,
-                           @PathVariable("password") String password)
+    @PostMapping("/register")
+    public void register(@RequestBody User user)
     {
-        List<Integer> emptyArray = new ArrayList<>();
-        User user = new User(id, nickname, name, surname, email, password, emptyArray);
         userService.saveUser(user);
+    }
+
+    // it is not complete
+    @PostMapping("/login")
+    public void login(@RequestParam("email") String email,
+                      @RequestParam("password") String password)
+    {
+        userService.login(email, password);
     }
 
     @DeleteMapping("/deleteuser/{id}")

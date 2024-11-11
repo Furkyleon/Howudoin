@@ -1,6 +1,7 @@
 package edu.project.howudoin.service;
 
 import edu.project.howudoin.model.FriendRequest;
+import edu.project.howudoin.model.User;
 import edu.project.howudoin.repository.FriendRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,10 @@ public class FriendRequestService {
         request.setAccepted(true);
         friendRequestRepository.save(request);
         userService.addFriend(request);
+    }
+
+    public List<User> getFriends(int userId) {
+        return userService.getFriends(userId);
     }
 
     public FriendRequest getRequest(int id){
