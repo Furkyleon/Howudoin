@@ -11,5 +11,6 @@ import java.util.List;
 public class Group {
     private int id;
     private String groupName;
-    private List<String> membersNickname;
+    private List<User> users;
+    private List<Message> messages;
 }

@@ -4,7 +4,6 @@ import edu.project.howudoin.model.User;
 import edu.project.howudoin.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
@@ -19,6 +18,7 @@ public class UserService {
 
     public void deleteUser(int id) {
         User user = userRepository.findById(id).get();
+        // when user is deleted, remove from groups, other users' friends and friend requests
         userRepository.delete(user);
     }
 
