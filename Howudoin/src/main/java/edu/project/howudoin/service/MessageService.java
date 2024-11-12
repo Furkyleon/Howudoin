@@ -16,13 +16,13 @@ public class MessageService {
 
     // sending message function
     public void sendMessage(Message message) {
-        int senderId = message.getSenderId();
-        int receiverId = message.getReceiverId();
+        String senderNickname = message.getSenderNickname();
+        String receiverNickname = message.getReceiverNickname();
 
-        User sender = userService.getUser(senderId);
-        User receiver = userService.getUser(receiverId);
+        User sender = userService.getUser(senderNickname);
+        User receiver = userService.getUser(receiverNickname);
 
-        if (sender.getFriends().contains(receiverId) && receiver.getFriends().contains(senderId)) {
+        if (sender.getFriends().contains(receiverNickname) && receiver.getFriends().contains(senderNickname)) {
             System.out.println("Message sent.");
             messageRepository.save(message);
             userService.saveMessage(message);
@@ -32,10 +32,14 @@ public class MessageService {
         }
     }
 
+    public int generateMessageId(){
+        return (int) messageRepository.count();
+    }
+
     // getting messages function
     public List<String> getMessages(User user) {
-        int userId = user.getId();
-        user = userService.getUser(userId);
+        String nickname = user.getNickname();
+        user = userService.getUser(nickname);
         return user.getMessages();
     }
 }

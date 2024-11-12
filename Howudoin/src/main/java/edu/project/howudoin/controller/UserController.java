@@ -13,12 +13,34 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    // POST /register: Register a new user (with name, last name, email, password)
+    // email and nickname should be unique
     @PostMapping("/register")
-    public void register(@RequestBody User user)
-    {
+    public void register(@RequestBody User user) {
+        int id = userService.generateUserId();
+        user.setId(id);
+        user.setFriends(new ArrayList<>());
+        user.setMessages(new ArrayList<>());
         userService.saveUser(user);
     }
 
+    /*
+    @PostMapping("/register/{nickname}/{name}/{lastname}/{email}/{password}")
+    public void register(@PathVariable("nickname") String nickname,
+                         @PathVariable("name") String name,
+                         @PathVariable("lastname") String lastname,
+                         @PathVariable("email") String email,
+                         @PathVariable("password") String password)
+    {
+        int id = userService.generateUserId();
+        List<Integer> emptyFriends = new ArrayList<>();
+        List<String> emptyMessages = new ArrayList<>();
+        User user = new User(id, nickname, name, lastname, email, password, emptyFriends, emptyMessages);
+        userService.saveUser(user);
+    }
+    */
+
+    // POST /login: Authenticate and login a user (with email and password)
     // it is not complete
     @PostMapping("/login")
     public void login(@RequestParam("email") String email,

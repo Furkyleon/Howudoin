@@ -21,27 +21,27 @@ public class FriendRequestController {
     // if there is request from sender to receiver, receiver cannot send friend request.
     // receiver should accept the request that sender sent (?).
     @PostMapping("/friends/add")
-    public void sendRequest(@RequestParam("id") int id,
-                            @RequestParam("senderId") int senderId,
-                            @RequestParam("receiverId") int receiverId)
+    public void sendRequest(@RequestParam("senderNickname") String senderNickname,
+                            @RequestParam("receiverNickname") String receiverNickname)
     {
-        FriendRequest request = new FriendRequest(id, senderId, receiverId, false);
+        int id = friendRequestService.generateRequestId();
+        FriendRequest request = new FriendRequest(id, senderNickname, receiverNickname, false);
         friendRequestService.sendRequest(request);
     }
 
     // POST /friends/accept: Accept a friend request (If there is a friend request)
     // maybe receiver can accept request by using sender username (?)
     @PostMapping("/friends/accept")
-    public void acceptRequest(@RequestParam("requestId") int requestId)
+    public void acceptRequest(@RequestParam("senderNickname") String senderNickname,
+                              @RequestParam("receiverNickname") String receiverNickname)
     {
-        System.out.println("First");
-        friendRequestService.acceptRequest(requestId);
+        friendRequestService.acceptRequest(senderNickname, receiverNickname);
     }
 
     // GET /friends: Retrieve friend list
     @GetMapping("/friends")
-    public List<User> getFriends(@RequestParam int userId)
+    public List<String> getFriends(@RequestParam String nickname)
     {
-        return friendRequestService.getFriends(userId);
+        return friendRequestService.getFriends(nickname);
     }
 }

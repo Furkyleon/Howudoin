@@ -17,6 +17,6 @@ public class User {
     private String lastname;
     private String email;
     private String password;
-    private List<Integer> friends = new ArrayList<>();
+    private List<String> friends = new ArrayList<>();
     private List<String> messages = new ArrayList<>();
 }

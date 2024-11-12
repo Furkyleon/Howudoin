@@ -20,21 +20,21 @@ public class MessageController {
     // POST /messages/send: Send a message to a friend
     // instead of requestparam, use requestbody (easier)
     @PostMapping("/messages/send")
-    public void sendMessage(@RequestParam int senderId,
-                            @RequestParam int receiverId,
+    public void sendMessage(@RequestParam String senderNickname,
+                            @RequestParam String receiverNickname,
                             @RequestParam String content)
     {
-        Message message = new Message(senderId, receiverId, content);
+        int id = messageService.generateMessageId();
+        Message message = new Message(id, senderNickname, receiverNickname, content);
         messageService.sendMessage(message);
     }
 
     // GET /messages: Retrieve conversation history
-    // it can be enhanced (sender->receiver: content)
+    // it can be enhanced ("sender->receiver: content")
     @GetMapping("/messages")
-    public List<String> getMessages(@RequestParam("id") int id)
+    public List<String> getMessages(@RequestParam("nickname") String nickname)
     {
-        User user = userService.getUser(id);
+        User user = userService.getUser(nickname);
         return messageService.getMessages(user);
     }
 }
-

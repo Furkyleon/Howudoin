@@ -23,6 +23,10 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public int generateUserId(){
+        return (int) userRepository.count();
+    }
+
     // login function (not complete)
     public void login(String email, String password) {
         // login authentication
@@ -38,8 +42,8 @@ public class UserService {
     }
 
     // getting user function
-    public User getUser(int id) {
-        return userRepository.findById(id).get();
+    public User getUser(String nickname) {
+        return userRepository.findByNickname(nickname).get();
     }
 
     // getting users function
@@ -52,42 +56,38 @@ public class UserService {
     */
 
     // adding friend function (for /friends/accept)
-    public void addFriend(FriendRequest request){
-        int senderId = request.getSenderId();
-        int receiverId = request.getReceiverId();
+    public void addFriend(FriendRequest request) {
+        String senderNickname = request.getSenderNickname();
+        String receiverNickname = request.getReceiverNickname();
 
         User sender;
         User receiver;
 
-        if (userRepository.existsById(senderId) && userRepository.existsById(receiverId)) {
+        if (userRepository.existsByNickname(senderNickname) && userRepository.existsByNickname(receiverNickname)) {
             System.out.println("Both sender and receiver exist.");
-            sender = userRepository.findById(senderId).get();
-            receiver = userRepository.findById(receiverId).get();
+            sender = userRepository.findByNickname(senderNickname).get();
+            receiver = userRepository.findByNickname(receiverNickname).get();
 
-            sender.getFriends().add(receiverId);
+            // burdaki sıkıntıyı çözemedik. niye silip tekrar kaydetmek gerekiyor?
+            // (önceden save diyince öncekinin üstüne geçiyodu)
+            userRepository.delete(sender);
+            sender.getFriends().add(receiverNickname);
             userRepository.save(sender);
 
-            receiver.getFriends().add(senderId);
+            userRepository.delete(receiver);
+            receiver.getFriends().add(senderNickname);
             userRepository.save(receiver);
 
             System.out.println("Request is accepted.");
-        }
-        else {
+        } else {
             System.out.println("There is no such sender or receiver.");
         }
     }
 
     // getting friends function (for /friends)
-    public List<User> getFriends(int userId){
-        User user = userRepository.findById(userId).get();
-        List<Integer> friendsId = user.getFriends();
-        List<User> friends = new ArrayList<>();
-        User friendUser;
-        for (Integer friend : friendsId) {
-            friendUser = userRepository.findById(friend).get();
-            friends.add(friendUser);
-        }
-        return friends;
+    public List<String> getFriends(String nickname){
+        User user = userRepository.findByNickname(nickname).get();
+        return user.getFriends();
     }
 
     /*
@@ -95,17 +95,19 @@ public class UserService {
     */
 
     // saving message function (for /message/send)
-    public void saveMessage(Message message){
+    public void saveMessage (Message message){
         String content = message.getContent();
-        int senderId =  message.getSenderId();
-        int receiverId = message.getReceiverId();
+        String senderNickname =  message.getSenderNickname();
+        String receiverNickname = message.getReceiverNickname();
 
-        User sender = userRepository.findById(senderId).get();
+        User sender = userRepository.findByNickname(senderNickname).get();
+        userRepository.delete(sender);
         sender.getMessages().add(content);
-        User receiver = userRepository.findById(receiverId).get();
-        receiver.getMessages().add(content);
-
         userRepository.save(sender);
+
+        User receiver = userRepository.findByNickname(receiverNickname).get();
+        userRepository.delete(receiver);
+        receiver.getMessages().add(content);
         userRepository.save(receiver);
     }
 }

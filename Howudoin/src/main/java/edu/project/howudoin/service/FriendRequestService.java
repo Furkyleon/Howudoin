@@ -21,13 +21,20 @@ public class FriendRequestService {
         friendRequestRepository.save(request);
     }
 
+    public int generateRequestId(){
+        return (int)friendRequestRepository.count();
+    }
+
     // accepting request function
-    public void acceptRequest(int requestId){
+    public void acceptRequest(String senderNickname, String receiverNickname){
         FriendRequest request;
-        if (friendRequestRepository.existsById(requestId)){
-            request = friendRequestRepository.findById(requestId).get();
+        if (friendRequestRepository.existsBySenderNicknameAndReceiverNickname(senderNickname, receiverNickname)) {
+            request = friendRequestRepository.findBySenderNicknameAndReceiverNickname(senderNickname, receiverNickname).get();
+
+            friendRequestRepository.delete(request);
             request.setAccepted(true);
             friendRequestRepository.save(request);
+
             userService.addFriend(request);
         }
         else {
@@ -36,7 +43,7 @@ public class FriendRequestService {
     }
 
     // getting friends function
-    public List<User> getFriends(int userId) {
-        return userService.getFriends(userId);
+    public List<String> getFriends(String nickname) {
+        return userService.getFriends(nickname);
     }
 }
