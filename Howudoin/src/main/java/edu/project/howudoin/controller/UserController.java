@@ -1,7 +1,5 @@
 package edu.project.howudoin.controller;
 
-
-import edu.project.howudoin.model.Message;
 import edu.project.howudoin.model.User;
 import edu.project.howudoin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +27,14 @@ public class UserController {
         userService.login(email, password);
     }
 
+    // not mentioned in project file
     @DeleteMapping("/deleteuser/{id}")
     public void deleteUser(@PathVariable("id") int id)
     {
         userService.deleteUser(id);
     }
 
+    // not mentioned in project file
     @GetMapping("/getusers")
     public List<User> getUsers(){
         return userService.getUsers();

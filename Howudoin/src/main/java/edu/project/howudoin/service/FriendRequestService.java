@@ -16,26 +16,27 @@ public class FriendRequestService {
     @Autowired
     private UserService userService;
 
+    // sending request function
     public void sendRequest(FriendRequest request){
         friendRequestRepository.save(request);
     }
 
-    public void acceptRequest(FriendRequest request){
-        request.setAccepted(true);
-        friendRequestRepository.save(request);
-        userService.addFriend(request);
+    // accepting request function
+    public void acceptRequest(int requestId){
+        FriendRequest request;
+        if (friendRequestRepository.existsById(requestId)){
+            request = friendRequestRepository.findById(requestId).get();
+            request.setAccepted(true);
+            friendRequestRepository.save(request);
+            userService.addFriend(request);
+        }
+        else {
+            System.out.println("There is no such request.");
+        }
     }
 
+    // getting friends function
     public List<User> getFriends(int userId) {
         return userService.getFriends(userId);
-    }
-
-    public FriendRequest getRequest(int id){
-        FriendRequest request = friendRequestRepository.findById(id).get();
-        return request;
-    }
-
-    public List<FriendRequest> getRequests(Integer userId){
-        return friendRequestRepository.findAll();
     }
 }

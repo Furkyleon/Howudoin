@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/friends")
 public class FriendRequestController {
     @Autowired
     private FriendRequestService friendRequestService;
@@ -19,36 +18,30 @@ public class FriendRequestController {
     private UserService userService;
 
     // POST /friends/add: Send a friend request
-    @PostMapping("/add")
+    // if there is request from sender to receiver, receiver cannot send friend request.
+    // receiver should accept the request that sender sent (?).
+    @PostMapping("/friends/add")
     public void sendRequest(@RequestParam("id") int id,
                             @RequestParam("senderId") int senderId,
                             @RequestParam("receiverId") int receiverId)
     {
-        User sender = userService.getUser(senderId);
-        User receiver = userService.getUser(receiverId);
-        FriendRequest friendRequest = new FriendRequest(id, sender, receiver, false);
-        friendRequestService.sendRequest(friendRequest);
+        FriendRequest request = new FriendRequest(id, senderId, receiverId, false);
+        friendRequestService.sendRequest(request);
     }
 
-    // it does not work!!!
     // POST /friends/accept: Accept a friend request (If there is a friend request)
-    @PostMapping("/accept")
-    public void acceptRequest(@RequestParam("id") int id)
+    // maybe receiver can accept request by using sender username (?)
+    @PostMapping("/friends/accept")
+    public void acceptRequest(@RequestParam("requestId") int requestId)
     {
-        FriendRequest request = friendRequestService.getRequest(id);
-        friendRequestService.acceptRequest(request);
+        System.out.println("First");
+        friendRequestService.acceptRequest(requestId);
     }
 
-    // I did not try
     // GET /friends: Retrieve friend list
-    @GetMapping("/")
+    @GetMapping("/friends")
     public List<User> getFriends(@RequestParam int userId)
     {
         return friendRequestService.getFriends(userId);
     }
-
-//    @GetMapping("/get-requests")
-//    public List<FriendRequest> getRequests(@RequestParam int userId) {
-//        return friendRequestService.getRequests(userId);
-//    }
 }

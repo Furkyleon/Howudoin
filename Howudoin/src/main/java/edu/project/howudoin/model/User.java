@@ -11,12 +11,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    private Integer id;
+    private int id;
     private String nickname;
     private String name;
     private String lastname;
     private String email;
     private String password;
-    private List<User> friends = new ArrayList<>();
-    private List<Message> messages = new ArrayList<>();
+    private List<Integer> friends = new ArrayList<>();
+    private List<String> messages = new ArrayList<>();
 }

@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/messages")
 public class MessageController {
     @Autowired
     private MessageService messageService;
@@ -19,20 +18,20 @@ public class MessageController {
     private UserService userService;
 
     // POST /messages/send: Send a message to a friend
-    @PostMapping("/send")
+    // instead of requestparam, use requestbody (easier)
+    @PostMapping("/messages/send")
     public void sendMessage(@RequestParam int senderId,
                             @RequestParam int receiverId,
                             @RequestParam String content)
     {
-        User sender = userService.getUser(senderId);
-        User receiver = userService.getUser(receiverId);
-        Message message = new Message(sender, receiver, content);
+        Message message = new Message(senderId, receiverId, content);
         messageService.sendMessage(message);
     }
 
     // GET /messages: Retrieve conversation history
-    @GetMapping("/{id}")
-    public List<Message> getMessages(@PathVariable int id)
+    // it can be enhanced (sender->receiver: content)
+    @GetMapping("/messages")
+    public List<String> getMessages(@RequestParam("id") int id)
     {
         User user = userService.getUser(id);
         return messageService.getMessages(user);
