@@ -18,5 +18,5 @@ public class User {
     private String email;
     private String password;
     private List<String> friends = new ArrayList<>();
-    private List<String> messages = new ArrayList<>();
+    private List<Message> messages = new ArrayList<>();
 }

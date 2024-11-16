@@ -24,6 +24,27 @@ public class UserController {
         userService.saveUser(user);
     }
 
+    // POST /login: Authenticate and login a user (with email and password)
+    // it is not complete
+    @PostMapping("/login")
+    public void login(@RequestBody User user)
+    {
+        userService.login(user.getEmail(), user.getPassword());
+    }
+
+    // not mentioned in project file
+    @DeleteMapping("/deleteuser/{id}")
+    public void deleteUser(@PathVariable("id") int id)
+    {
+        userService.deleteUser(id);
+    }
+
+    // not mentioned in project file
+    @GetMapping("/getusers")
+    public List<User> getUsers(){
+        return userService.getUsers();
+    }
+
     /*
     @PostMapping("/register/{nickname}/{name}/{lastname}/{email}/{password}")
     public void register(@PathVariable("nickname") String nickname,
@@ -39,26 +60,4 @@ public class UserController {
         userService.saveUser(user);
     }
     */
-
-    // POST /login: Authenticate and login a user (with email and password)
-    // it is not complete
-    @PostMapping("/login")
-    public void login(@RequestParam("email") String email,
-                      @RequestParam("password") String password)
-    {
-        userService.login(email, password);
-    }
-
-    // not mentioned in project file
-    @DeleteMapping("/deleteuser/{id}")
-    public void deleteUser(@PathVariable("id") int id)
-    {
-        userService.deleteUser(id);
-    }
-
-    // not mentioned in project file
-    @GetMapping("/getusers")
-    public List<User> getUsers(){
-        return userService.getUsers();
-    }
 }

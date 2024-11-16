@@ -32,7 +32,7 @@ public class MessageController {
     // GET /messages: Retrieve conversation history
     // it can be enhanced ("sender->receiver: content")
     @GetMapping("/messages")
-    public List<String> getMessages(@RequestParam("nickname") String nickname)
+    public List<Message> getMessages(@RequestParam("nickname") String nickname)
     {
         User user = userService.getUser(nickname);
         return messageService.getMessages(user);

@@ -16,13 +16,14 @@ public class FriendRequestService {
     @Autowired
     private UserService userService;
 
+    // generating id
+    public int generateRequestId(){
+        return (int)friendRequestRepository.count();
+    }
+
     // sending request function
     public void sendRequest(FriendRequest request){
         friendRequestRepository.save(request);
-    }
-
-    public int generateRequestId(){
-        return (int)friendRequestRepository.count();
     }
 
     // accepting request function

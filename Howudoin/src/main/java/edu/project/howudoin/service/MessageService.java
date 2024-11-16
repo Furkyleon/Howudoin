@@ -14,6 +14,11 @@ public class MessageService {
     @Autowired
     private UserService userService;
 
+    // generating id
+    public int generateMessageId(){
+        return (int) messageRepository.count();
+    }
+
     // sending message function
     public void sendMessage(Message message) {
         String senderNickname = message.getSenderNickname();
@@ -28,16 +33,12 @@ public class MessageService {
             userService.saveMessage(message);
         }
         else {
-            System.out.println("Message not sent. They are not friend.");
+            System.out.println("Message could not be sent. They are not friend.");
         }
     }
 
-    public int generateMessageId(){
-        return (int) messageRepository.count();
-    }
-
     // getting messages function
-    public List<String> getMessages(User user) {
+    public List<Message> getMessages(User user) {
         String nickname = user.getNickname();
         user = userService.getUser(nickname);
         return user.getMessages();
