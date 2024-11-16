@@ -18,19 +18,32 @@ public class UserService {
         UserController
     */
 
-    // register function (saves user)
-    public void saveUser(User user) {
-        userRepository.save(user);
-    }
-
+    // generating id
     public int generateUserId(){
         return (int) userRepository.count();
     }
 
+    // saving user to database
+    public void saveUser(User user) {
+        userRepository.save(user);
+    }
+
     // login function (not complete)
     public void login(String email, String password) {
-        // login authentication
-        System.out.println("Succesfully logined");
+        boolean check = userRepository.existsByEmail(email);
+        if (check){
+            User user = userRepository.findByEmail(email).get();
+            if (user.getPassword().equals(password)) {
+                System.out.println("Succesfully logined");
+            }
+            else {
+                System.out.println("Incorrect password!");
+            }
+        }
+        else {
+            System.out.println("Incorrect email!");
+        }
+
     }
 
     //
@@ -44,6 +57,11 @@ public class UserService {
     // getting user function
     public User getUser(String nickname) {
         return userRepository.findByNickname(nickname).get();
+    }
+
+    // user check
+    public boolean userCheck(String nickname){
+        return userRepository.existsByNickname(nickname);
     }
 
     // getting users function
@@ -96,18 +114,17 @@ public class UserService {
 
     // saving message function (for /message/send)
     public void saveMessage (Message message){
-        String content = message.getContent();
         String senderNickname =  message.getSenderNickname();
         String receiverNickname = message.getReceiverNickname();
 
         User sender = userRepository.findByNickname(senderNickname).get();
         userRepository.delete(sender);
-        sender.getMessages().add(content);
+        sender.getMessages().add(message);
         userRepository.save(sender);
 
         User receiver = userRepository.findByNickname(receiverNickname).get();
         userRepository.delete(receiver);
-        receiver.getMessages().add(content);
+        receiver.getMessages().add(message);
         userRepository.save(receiver);
     }
 }
