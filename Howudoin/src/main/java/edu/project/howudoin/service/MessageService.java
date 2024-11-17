@@ -33,7 +33,7 @@ public class MessageService {
             userService.saveMessage(message);
         }
         else {
-            System.out.println("Message could not be sent. They are not friend.");
+            System.out.println("Message could not be sent. You are not friend with receiver.");
         }
     }
 
