@@ -20,12 +20,10 @@ public class MessageController {
     // POST /messages/send: Send a message to a friend
     // instead of requestparam, use requestbody (easier)
     @PostMapping("/messages/send")
-    public void sendMessage(@RequestParam String senderNickname,
-                            @RequestParam String receiverNickname,
-                            @RequestParam String content)
+    public void sendMessage(@RequestBody Message message)
     {
         int id = messageService.generateMessageId();
-        Message message = new Message(id, senderNickname, receiverNickname, content);
+        message.setId(id);
         messageService.sendMessage(message);
     }
 

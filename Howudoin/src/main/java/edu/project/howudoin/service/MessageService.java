@@ -21,13 +21,13 @@ public class MessageService {
 
     // sending message function
     public void sendMessage(Message message) {
-        String senderNickname = message.getSenderNickname();
-        String receiverNickname = message.getReceiverNickname();
+        String sender = message.getSender();
+        String receiver = message.getReceiver();
 
-        User sender = userService.getUser(senderNickname);
-        User receiver = userService.getUser(receiverNickname);
+        User senderUser = userService.getUser(sender);
+        User receiverUser = userService.getUser(receiver);
 
-        if (sender.getFriends().contains(receiverNickname) && receiver.getFriends().contains(senderNickname)) {
+        if (senderUser.getFriends().contains(receiver) && receiverUser.getFriends().contains(sender)) {
             System.out.println("Message sent.");
             messageRepository.save(message);
             userService.saveMessage(message);

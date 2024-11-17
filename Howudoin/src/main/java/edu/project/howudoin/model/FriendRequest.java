@@ -10,7 +10,7 @@ import org.springframework.data.annotation.Id;
 @AllArgsConstructor
 public class FriendRequest {
     private int id;
-    private String senderNickname;
-    private String receiverNickname;
+    private String sender;
+    private String receiver;
     private boolean isAccepted;
 }

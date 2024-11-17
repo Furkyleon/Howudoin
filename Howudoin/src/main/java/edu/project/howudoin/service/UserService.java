@@ -6,7 +6,6 @@ import edu.project.howudoin.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,13 +27,34 @@ public class UserService {
         userRepository.save(user);
     }
 
-    // login function (not complete)
+    // register function
+    public void register(User user) {
+        String email = user.getEmail();
+        String nickname = user.getNickname();
+        boolean check1 = userRepository.existsByEmail(email);
+        boolean check2 = userRepository.existsByEmail(nickname);
+
+        if (check1 && check2) {
+            System.out.println("Both email and nickname are already registered.");
+        }
+        else if (check1) {
+            System.out.println("Email already registered.");
+        }
+        else if (check2) {
+            System.out.println("Nickname already registered.");
+        }
+        else {
+            userRepository.save(user);
+        }
+    }
+
+    // login function
     public void login(String email, String password) {
         boolean check = userRepository.existsByEmail(email);
         if (check){
             User user = userRepository.findByEmail(email).get();
             if (user.getPassword().equals(password)) {
-                System.out.println("Succesfully logined");
+                System.out.println("Successfully login!");
             }
             else {
                 System.out.println("Incorrect password!");
@@ -43,15 +63,6 @@ public class UserService {
         else {
             System.out.println("Incorrect email!");
         }
-
-    }
-
-    //
-    // deleting function (but not mentioned in file)
-    public void deleteUser(int id) {
-        User user = userRepository.findById(id).get();
-        // when user is deleted, remove from groups, other users' friends and friend requests
-        userRepository.delete(user);
     }
 
     // getting user function
@@ -75,8 +86,8 @@ public class UserService {
 
     // adding friend function (for /friends/accept)
     public void addFriend(FriendRequest request) {
-        String senderNickname = request.getSenderNickname();
-        String receiverNickname = request.getReceiverNickname();
+        String senderNickname = request.getSender();
+        String receiverNickname = request.getReceiver();
 
         User sender;
         User receiver;
@@ -103,7 +114,7 @@ public class UserService {
     }
 
     // getting friends function (for /friends)
-    public List<String> getFriends(String nickname){
+    public List<String> getFriends(String nickname) {
         User user = userRepository.findByNickname(nickname).get();
         return user.getFriends();
     }
@@ -114,17 +125,26 @@ public class UserService {
 
     // saving message function (for /message/send)
     public void saveMessage (Message message){
-        String senderNickname =  message.getSenderNickname();
-        String receiverNickname = message.getReceiverNickname();
+        String sender =  message.getSender();
+        String receiver = message.getReceiver();
 
-        User sender = userRepository.findByNickname(senderNickname).get();
-        userRepository.delete(sender);
-        sender.getMessages().add(message);
-        userRepository.save(sender);
+        User senderUser = userRepository.findByNickname(sender).get();
+        userRepository.delete(senderUser);
+        senderUser.getMessages().add(message);
+        userRepository.save(senderUser);
 
-        User receiver = userRepository.findByNickname(receiverNickname).get();
-        userRepository.delete(receiver);
-        receiver.getMessages().add(message);
-        userRepository.save(receiver);
+        User receiverUser = userRepository.findByNickname(receiver).get();
+        userRepository.delete(receiverUser);
+        receiverUser.getMessages().add(message);
+        userRepository.save(receiverUser);
     }
+
+    /*/
+    / deleting function (but not mentioned in file)
+    public void deleteUser(int id) {
+        User user = userRepository.findById(id).get();
+        // when user is deleted, remove from groups, other users' friends and friend requests
+        userRepository.delete(user);
+    }
+    */
 }

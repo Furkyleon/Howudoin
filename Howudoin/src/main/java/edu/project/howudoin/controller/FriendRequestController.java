@@ -18,8 +18,6 @@ public class FriendRequestController {
     private UserService userService;
 
     // POST /friends/add: Send a friend request
-    // if there is request from sender to receiver, receiver cannot send friend request.
-    // receiver should accept the request that sender sent (?).
     @PostMapping("/friends/add")
     public void sendRequest(@RequestParam("senderNickname") String senderNickname,
                             @RequestParam("receiverNickname") String receiverNickname)
@@ -30,7 +28,6 @@ public class FriendRequestController {
     }
 
     // POST /friends/accept: Accept a friend request (If there is a friend request)
-    // maybe receiver can accept request by using sender username (?)
     @PostMapping("/friends/accept")
     public void acceptRequest(@RequestParam("senderNickname") String senderNickname,
                               @RequestParam("receiverNickname") String receiverNickname)

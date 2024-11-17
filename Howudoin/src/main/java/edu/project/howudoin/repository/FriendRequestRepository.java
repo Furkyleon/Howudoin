@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface FriendRequestRepository extends MongoRepository<FriendRequest, Integer> {
 
-    boolean existsBySenderNicknameAndReceiverNickname(String senderNickname, String receiverNickname);
+    boolean existsBySenderAndReceiver(String sender, String receiver);
 
-    Optional<FriendRequest> findBySenderNicknameAndReceiverNickname(String senderNickname, String receiverNickname);
+    Optional<FriendRequest> findBySenderAndReceiver(String sender, String receiver);
 }

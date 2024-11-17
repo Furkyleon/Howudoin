@@ -24,16 +24,19 @@ public class GroupService {
         groupRepository.save(group);
     }
 
+    // getting group by id
     public Group getGroup(int groupId) {
         return groupRepository.findById(groupId).get();
     }
 
+    // adding member to group
     public void addMember(Group group, String memberName) {
         groupRepository.delete(group);
         group.getMembers().add(memberName);
         groupRepository.save(group);
     }
 
+    // sending message to group
     public void sendMessage(Group group, Message message) {
         groupRepository.delete(group);
         group.getMessages().add(message);
