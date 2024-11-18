@@ -139,6 +139,10 @@ public class UserService {
         userRepository.save(receiverUser);
     }
 
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).get();
+    }
+
     /*/
     / deleting function (but not mentioned in file)
     public void deleteUser(int id) {
