@@ -1,13 +1,39 @@
 package edu.project.howudoin.controller;
 
 import edu.project.howudoin.model.User;
+import edu.project.howudoin.security.JwtUtil;
 import edu.project.howudoin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
+
 @RestController
+public class UserController {
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @PostMapping("/register")
+    public void register(@RequestBody User user) {
+        int id = userService.generateUserId();
+        user.setId(id);
+        user.setFriends(new ArrayList<>());
+        user.setMessages(new ArrayList<>());
+        userService.register(user);
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody User user) {
+        userService.login(user.getEmail(), user.getPassword());
+        return jwtUtil.generateToken(user.getEmail());
+    }
+}
+
+/*@RestController
 public class UserController {
     @Autowired
     private UserService userService;
@@ -30,7 +56,7 @@ public class UserController {
         userService.login(user.getEmail(), user.getPassword());
     }
 
-    /*
+
     // not mentioned in project file
     @DeleteMapping("/deleteuser/{id}")
     public void deleteUser(@PathVariable("id") int id)
@@ -57,5 +83,6 @@ public class UserController {
         User user = new User(id, nickname, name, lastname, email, password, emptyFriends, emptyMessages);
         userService.saveUser(user);
     }
-    */
+
 }
+*/

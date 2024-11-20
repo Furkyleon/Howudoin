@@ -2,13 +2,74 @@ package edu.project.howudoin.controller;
 
 import edu.project.howudoin.model.FriendRequest;
 import edu.project.howudoin.service.FriendRequestService;
-import edu.project.howudoin.model.User;
-import edu.project.howudoin.service.UserService;
+import edu.project.howudoin.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+public class FriendRequestController {
+    @Autowired
+    private FriendRequestService friendRequestService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @PostMapping("/friends/add")
+    public void sendRequest(@RequestHeader("Authorization") String token,
+                            @RequestParam("senderNickname") String senderNickname,
+                            @RequestParam("receiverNickname") String receiverNickname) {
+        String jwt = extractJwt(token);
+
+        String email = jwtUtil.extractEmail(jwt);
+        if (jwtUtil.validateToken(jwt, email)) {
+            friendRequestService.sendRequest(new FriendRequest(0, senderNickname, receiverNickname, false));
+        } else {
+            throw new RuntimeException("Invalid Token");
+        }
+    }
+
+    @PostMapping("/friends/accept")
+    public void acceptRequest(@RequestHeader("Authorization") String token,
+                              @RequestParam("senderNickname") String senderNickname,
+                              @RequestParam("receiverNickname") String receiverNickname) {
+        String jwt = extractJwt(token);
+
+        String email = jwtUtil.extractEmail(jwt);
+        if (jwtUtil.validateToken(jwt, email)) {
+            friendRequestService.acceptRequest(senderNickname, receiverNickname);
+        } else {
+            throw new RuntimeException("Invalid Token");
+        }
+    }
+
+    @GetMapping("/friends")
+    public List<String> getFriends(@RequestHeader("Authorization") String token,
+                                   @RequestParam String nickname) {
+        String jwt = extractJwt(token);
+
+        String email = jwtUtil.extractEmail(jwt);
+        if (jwtUtil.validateToken(jwt, email)) {
+            return friendRequestService.getFriends(nickname);
+        } else {
+            throw new RuntimeException("Invalid Token");
+        }
+    }
+
+    private String extractJwt(String token) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new RuntimeException("Authorization header must start with 'Bearer '");
+        }
+        return token.substring(7);
+    }
+}
+
+
+
+
+
+/*
 @RestController
 public class FriendRequestController {
     @Autowired
@@ -42,3 +103,4 @@ public class FriendRequestController {
         return friendRequestService.getFriends(nickname);
     }
 }
+*/

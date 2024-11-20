@@ -6,6 +6,7 @@ import edu.project.howudoin.service.MessageService;
 import edu.project.howudoin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import edu.project.howudoin.security.JwtUtil;
 
 import java.util.List;
 
@@ -17,22 +18,32 @@ public class MessageController {
     @Autowired
     private UserService userService;
 
-    // POST /messages/send: Send a message to a friend
-    // instead of requestparam, use requestbody (easier)
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @PostMapping("/messages/send")
-    public void sendMessage(@RequestBody Message message)
-    {
-        int id = messageService.generateMessageId();
-        message.setId(id);
-        messageService.sendMessage(message);
+    public void sendMessage(@RequestHeader("Authorization") String token, @RequestBody Message message) {
+        String jwt = token.substring(7); // Remove "Bearer " prefix
+        String email = jwtUtil.extractEmail(jwt);
+
+        if (jwtUtil.validateToken(jwt, email)) {
+            messageService.sendMessage(message);
+        } else {
+            throw new RuntimeException("Invalid Token");
+        }
     }
 
-    // GET /messages: Retrieve conversation history
-    // it can be enhanced ("sender->receiver: content")
     @GetMapping("/messages")
-    public List<Message> getMessages(@RequestParam("nickname") String nickname)
-    {
-        User user = userService.getUser(nickname);
-        return messageService.getMessages(user);
+    public List<Message> getMessages(@RequestHeader("Authorization") String token,
+                                     @RequestParam("nickname") String nickname) {
+        String jwt = token.substring(7); // Remove "Bearer " prefix
+        String email = jwtUtil.extractEmail(jwt);
+
+        if (jwtUtil.validateToken(jwt, email)) {
+            User user = userService.getUser(nickname);
+            return messageService.getMessages(user);
+        } else {
+            throw new RuntimeException("Invalid Token");
+        }
     }
 }
