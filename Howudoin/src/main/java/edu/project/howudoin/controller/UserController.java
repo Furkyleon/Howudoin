@@ -1,6 +1,7 @@
 package edu.project.howudoin.controller;
 
 import edu.project.howudoin.model.User;
+import edu.project.howudoin.repository.UserRepository;
 import edu.project.howudoin.security.JwtUtil;
 import edu.project.howudoin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,77 +13,58 @@ import java.util.ArrayList;
 @RestController
 public class UserController {
     @Autowired
+    private UserRepository userRepository;
+    @Autowired
     private UserService userService;
-
     @Autowired
     private JwtUtil jwtUtil;
 
-    @PostMapping("/register")
-    public void register(@RequestBody User user) {
-        int id = userService.generateUserId();
-        user.setId(id);
-        user.setFriends(new ArrayList<>());
-        user.setMessages(new ArrayList<>());
-        userService.register(user);
-    }
-
-    @PostMapping("/login")
-    public String login(@RequestBody User user) {
-        userService.login(user.getEmail(), user.getPassword());
-        return jwtUtil.generateToken(user.getEmail());
-    }
-}
-
-/*@RestController
-public class UserController {
-    @Autowired
-    private UserService userService;
-
     // POST /register: Register a new user (with name, last name, email, password)
     @PostMapping("/register")
-    public void register(@RequestBody User user) {
+    public String register(@RequestBody User user) {
         int id = userService.generateUserId();
         user.setId(id);
         user.setFriends(new ArrayList<>());
         user.setMessages(new ArrayList<>());
-        userService.register(user);
+
+        String email = user.getEmail();
+        String nickname = user.getNickname();
+        boolean check1 = userRepository.existsByEmail(email);
+        boolean check2 = userRepository.existsByEmail(nickname);
+
+        if (check1 && check2) {
+            return "Both email and nickname are already registered.";
+        }
+        else if (check1) {
+            return "Email already registered.";
+        }
+        else if (check2) {
+            return "Nickname already registered.";
+        }
+        else {
+            userRepository.save(user);
+            return "User is registered successfully.";
+        }
     }
 
     // POST /login: Authenticate and login a user (with email and password)
-    // JWT is not done.
     @PostMapping("/login")
-    public void login(@RequestBody User user)
-    {
-        userService.login(user.getEmail(), user.getPassword());
+    public String login(@RequestBody User userBody) {
+        String email = userBody.getEmail();
+        String password = userBody.getPassword();
+
+        boolean check = userRepository.existsByEmail(email);
+        if (check){
+            User user = userRepository.findByEmail(email).get();
+            if (user.getPassword().equals(password)) {
+                return jwtUtil.generateToken(user.getEmail());
+            }
+            else {
+                return "Incorrect password!";
+            }
+        }
+        else {
+            return "Incorrect email!";
+        }
     }
-
-
-    // not mentioned in project file
-    @DeleteMapping("/deleteuser/{id}")
-    public void deleteUser(@PathVariable("id") int id)
-    {
-        userService.deleteUser(id);
-    }
-
-    // not mentioned in project file
-    @GetMapping("/getusers")
-    public List<User> getUsers(){
-        return userService.getUsers();
-    }
-
-    @PostMapping("/register/{nickname}/{name}/{lastname}/{email}/{password}")
-    public void register(@PathVariable("nickname") String nickname,
-                         @PathVariable("name") String name,
-                         @PathVariable("lastname") String lastname,
-                         @PathVariable("email") String email,
-                         @PathVariable("password") String password)
-    {
-        int id = userService.generateUserId();
-        List<Integer> emptyFriends = new ArrayList<>();
-        List<String> emptyMessages = new ArrayList<>();
-        User user = new User(id, nickname, name, lastname, email, password, emptyFriends, emptyMessages);
-        userService.saveUser(user);
-    }
-
 }
-*/

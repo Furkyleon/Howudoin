@@ -20,20 +20,26 @@ public class MessageService {
     }
 
     // sending message function
-    public void sendMessage(Message message) {
+    public String sendMessage(Message message) {
         String sender = message.getSender();
         String receiver = message.getReceiver();
+        boolean receiverCheck = userService.userCheck(receiver);
 
-        User senderUser = userService.getUser(sender);
-        User receiverUser = userService.getUser(receiver);
-
-        if (senderUser.getFriends().contains(receiver) && receiverUser.getFriends().contains(sender)) {
-            System.out.println("Message sent.");
-            messageRepository.save(message);
-            userService.saveMessage(message);
+        if (!receiverCheck) {
+            return "There is no user that named " + receiver + ".";
         }
         else {
-            System.out.println("Message could not be sent. You are not friend with receiver.");
+            User senderUser = userService.getUser(sender);
+            User receiverUser = userService.getUser(receiver);
+
+            if (senderUser.getFriends().contains(receiver) && receiverUser.getFriends().contains(sender)) {
+                System.out.println("Message sent.");
+                messageRepository.save(message);
+                userService.saveMessage(message);
+            }
+            else {
+                return "Message could not be sent. You are not friend with receiver.";
+            }
         }
     }
 

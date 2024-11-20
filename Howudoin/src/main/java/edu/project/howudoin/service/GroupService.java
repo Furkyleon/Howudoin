@@ -2,7 +2,6 @@ package edu.project.howudoin.service;
 
 import edu.project.howudoin.model.Group;
 import edu.project.howudoin.model.Message;
-import edu.project.howudoin.model.User;
 import edu.project.howudoin.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,5 +40,11 @@ public class GroupService {
         groupRepository.delete(group);
         group.getMessages().add(message);
         groupRepository.save(group);
+    }
+
+    // checking if a member is in a group or not
+    public boolean memberCheck(int groupId, String memberName) {
+        Group group = groupRepository.findById(groupId).get();
+        return group.getMembers().contains(memberName);
     }
 }

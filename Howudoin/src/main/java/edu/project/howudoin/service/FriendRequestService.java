@@ -11,7 +11,6 @@ import java.util.List;
 public class FriendRequestService {
     @Autowired
     private FriendRequestRepository friendRequestRepository;
-
     @Autowired
     private UserService userService;
 
@@ -21,26 +20,34 @@ public class FriendRequestService {
     }
 
     // sending request function
-    public void sendRequest(FriendRequest request){
+    public String sendRequest(FriendRequest request){
         String sender = request.getSender();
         String receiver = request.getReceiver();
+        boolean receiverCheck = userService.userCheck(receiver);
 
-        boolean check1 = friendRequestRepository.existsBySenderAndReceiver(sender, receiver);
-        boolean check2 = friendRequestRepository.existsBySenderAndReceiver(receiver, sender);
-
-        if (check1){
-            System.out.println("You have already sent an request to receiver.");
+        if (!receiverCheck) {
+            return "There is no user that named " + receiver + ".";
         }
-        else if (check2){
-            System.out.println("The receiver already sent an request to you. You can accept the request.");
+        else if (sender.equals(receiver)) {
+            return "You cannot send request to yourself!";
         }
         else {
-            friendRequestRepository.save(request);
+            boolean check1 = friendRequestRepository.existsBySenderAndReceiver(sender, receiver);
+            boolean check2 = friendRequestRepository.existsBySenderAndReceiver(receiver, sender);
+
+            if (check1) {
+                return "You have already sent an request to receiver.";
+            } else if (check2) {
+                return "The receiver already sent an request to you. You can accept the request.";
+            } else {
+                friendRequestRepository.save(request);
+                return "Request has been sent.";
+            }
         }
     }
 
     // accepting request function
-    public void acceptRequest(String senderNickname, String receiverNickname){
+    public String acceptRequest(String senderNickname, String receiverNickname){
         FriendRequest request;
         if (friendRequestRepository.existsBySenderAndReceiver(senderNickname, receiverNickname)) {
             request = friendRequestRepository.findBySenderAndReceiver(senderNickname, receiverNickname).get();
@@ -50,9 +57,10 @@ public class FriendRequestService {
             friendRequestRepository.save(request);
 
             userService.addFriend(request);
+            return "Request has been accepted.";
         }
         else {
-            System.out.println("There is no such request.");
+            return "There is no such request.";
         }
     }
 

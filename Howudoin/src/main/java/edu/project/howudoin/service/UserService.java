@@ -22,26 +22,22 @@ public class UserService {
         return (int) userRepository.count();
     }
 
-    // saving user to database
-    public void saveUser(User user) {
-        userRepository.save(user);
-    }
-
+    /*
     // register function
-    public void register(User user) {
+    public String register(User user) {
         String email = user.getEmail();
         String nickname = user.getNickname();
         boolean check1 = userRepository.existsByEmail(email);
         boolean check2 = userRepository.existsByEmail(nickname);
 
         if (check1 && check2) {
-            System.out.println("Both email and nickname are already registered.");
+            return "Both email and nickname are already registered.";
         }
         else if (check1) {
-            System.out.println("Email already registered.");
+            return "Email already registered.";
         }
         else if (check2) {
-            System.out.println("Nickname already registered.");
+            return "Nickname already registered.";
         }
         else {
             userRepository.save(user);
@@ -64,6 +60,7 @@ public class UserService {
             System.out.println("Incorrect email!");
         }
     }
+    */
 
     // getting user function
     public User getUser(String nickname) {
@@ -75,17 +72,12 @@ public class UserService {
         return userRepository.existsByNickname(nickname);
     }
 
-    // getting users function
-    public List<User> getUsers() {
-        return userRepository.findAll();
-    }
-
     /*
         FriendRequestController
     */
 
     // adding friend function (for /friends/accept)
-    public void addFriend(FriendRequest request) {
+    public String addFriend(FriendRequest request) {
         String senderNickname = request.getSender();
         String receiverNickname = request.getReceiver();
 
@@ -93,12 +85,9 @@ public class UserService {
         User receiver;
 
         if (userRepository.existsByNickname(senderNickname) && userRepository.existsByNickname(receiverNickname)) {
-            System.out.println("Both sender and receiver exist.");
             sender = userRepository.findByNickname(senderNickname).get();
             receiver = userRepository.findByNickname(receiverNickname).get();
 
-            // burdaki sıkıntıyı çözemedik. niye silip tekrar kaydetmek gerekiyor?
-            // (önceden save diyince öncekinin üstüne geçiyodu)
             userRepository.delete(sender);
             sender.getFriends().add(receiverNickname);
             userRepository.save(sender);
@@ -107,9 +96,9 @@ public class UserService {
             receiver.getFriends().add(senderNickname);
             userRepository.save(receiver);
 
-            System.out.println("Request is accepted.");
+            return "Request is accepted.";
         } else {
-            System.out.println("There is no such sender or receiver.");
+            return "There is no such sender or receiver.";
         }
     }
 
@@ -143,12 +132,15 @@ public class UserService {
         return userRepository.findByEmail(email).get();
     }
 
-    /*/
-    / deleting function (but not mentioned in file)
-    public void deleteUser(int id) {
-        User user = userRepository.findById(id).get();
-        // when user is deleted, remove from groups, other users' friends and friend requests
+    /*
+        Group Controller
+     */
+
+    // adding group to user
+    public void addToGroups(String nickname, String groupName) {
+        User user = getUser(nickname);
         userRepository.delete(user);
+        user.getGroups().add(groupName);
+        userRepository.save(user);
     }
-    */
 }

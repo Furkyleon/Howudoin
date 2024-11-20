@@ -14,29 +14,34 @@ import java.util.List;
 public class MessageController {
     @Autowired
     private MessageService messageService;
-
     @Autowired
     private UserService userService;
-
     @Autowired
     private JwtUtil jwtUtil;
 
+    // POST /messages/send: Send a message to a friend
     @PostMapping("/messages/send")
-    public void sendMessage(@RequestHeader("Authorization") String token, @RequestBody Message message) {
-        String jwt = token.substring(7); // Remove "Bearer " prefix
+    public String sendMessage(@RequestHeader("Authorization") String token,
+                              @RequestBody Message message)
+    {
+        String jwt = token.substring(7);
         String email = jwtUtil.extractEmail(jwt);
 
         if (jwtUtil.validateToken(jwt, email)) {
-            messageService.sendMessage(message);
+            int id = messageService.generateMessageId();
+            message.setId(id);
+            return messageService.sendMessage(message);
         } else {
             throw new RuntimeException("Invalid Token");
         }
     }
 
+    // GET /messages: Retrieve conversation history
     @GetMapping("/messages")
     public List<Message> getMessages(@RequestHeader("Authorization") String token,
-                                     @RequestParam("nickname") String nickname) {
-        String jwt = token.substring(7); // Remove "Bearer " prefix
+                                     @RequestParam("nickname") String nickname)
+    {
+        String jwt = token.substring(7);
         String email = jwtUtil.extractEmail(jwt);
 
         if (jwtUtil.validateToken(jwt, email)) {
