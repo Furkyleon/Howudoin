@@ -30,15 +30,21 @@ public class GroupController {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
-        if (jwtUtil.validateToken(jwt, email)) {
-            int id = groupService.generateGroupId();
-            group.setId(id);
-            group.getMembers().add(group.getCreatorName());
-            userService.addToGroups(group.getCreatorName(), group.getGroupName());
-            groupService.saveGroup(group);
-            return "Group is created.";
-        } else {
-            throw new RuntimeException("Invalid Token");
+        boolean check = userService.userCheck(group.getCreatorName());
+        if (check) {
+            if (jwtUtil.validateToken(jwt, email)) {
+                int id = groupService.generateGroupId();
+                group.setId(id);
+                group.getMembers().add(group.getCreatorName());
+                userService.addToGroups(group.getCreatorName(), group.getGroupName());
+                groupService.saveGroup(group);
+                return "Group is created.";
+            } else {
+                throw new RuntimeException("Invalid Token");
+            }
+        }
+        else {
+            return "There is no user that named " + group.getCreatorName() + ".";
         }
     }
 
@@ -55,14 +61,14 @@ public class GroupController {
             boolean check1 = userService.userCheck(memberName);
             boolean check2 = groupService.memberCheck(groupId, memberName);
 
-            if (check1){
+            if (check2){
+                return "This member is already in the group.";
+            }
+            else if (check1){
                 Group group = groupService.getGroup(groupId);
                 userService.addToGroups(memberName, group.getGroupName());
                 groupService.addMember(group, memberName);
                 return "Member is added to the group.";
-            }
-            else if (check2){
-                return "This member is already in the group.";
             }
             else {
                 return "There is no such user named " + memberName + ".";
@@ -82,12 +88,23 @@ public class GroupController {
         String email = jwtUtil.extractEmail(jwt);
 
         if (jwtUtil.validateToken(jwt, email)) {
-            int id = messageService.generateMessageId();
-            message.setId(id);
-            message.setReceiver(groupService.getGroup(groupId).getGroupName());
-            Group group = groupService.getGroup(groupId);
-            groupService.sendMessage(group, message);
-            return "Message is sent to the group.";
+            boolean check1 = userService.userCheck(message.getSender());
+            boolean check2 = groupService.memberCheck(groupId, message.getSender());
+
+            if (check1 && check2) {
+                int id = groupService.generateMessageId();
+                message.setId(id);
+                message.setReceiver(groupService.getGroup(groupId).getGroupName());
+                Group group = groupService.getGroup(groupId);
+                groupService.sendMessage(group, message);
+                return "Message is sent to the group.";
+            }
+            else if (check1) {
+                return "This user is not in this group.";
+            }
+            else {
+                return "There is no such user named " + message.getSender() + ".";
+            }
         } else {
             throw new RuntimeException("Invalid Token");
         }

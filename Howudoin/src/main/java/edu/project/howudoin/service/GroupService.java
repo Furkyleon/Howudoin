@@ -3,6 +3,7 @@ package edu.project.howudoin.service;
 import edu.project.howudoin.model.Group;
 import edu.project.howudoin.model.Message;
 import edu.project.howudoin.repository.GroupRepository;
+import edu.project.howudoin.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,16 @@ import java.util.List;
 public class GroupService {
     @Autowired
     private GroupRepository groupRepository;
+    @Autowired
+    private MessageRepository messageRepository;
 
     // generating id
     public int generateGroupId(){
         return (int) groupRepository.count();
+    }
+
+    public int generateMessageId(){
+        return (int) messageRepository.count();
     }
 
     // saving group to database

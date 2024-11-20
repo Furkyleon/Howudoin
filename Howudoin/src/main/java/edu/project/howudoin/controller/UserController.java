@@ -30,7 +30,7 @@ public class UserController {
         String email = user.getEmail();
         String nickname = user.getNickname();
         boolean check1 = userRepository.existsByEmail(email);
-        boolean check2 = userRepository.existsByEmail(nickname);
+        boolean check2 = userRepository.existsByNickname(nickname);
 
         if (check1 && check2) {
             return "Both email and nickname are already registered.";

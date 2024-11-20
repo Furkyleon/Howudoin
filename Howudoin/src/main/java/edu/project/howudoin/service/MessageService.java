@@ -36,6 +36,7 @@ public class MessageService {
                 System.out.println("Message sent.");
                 messageRepository.save(message);
                 userService.saveMessage(message);
+                return "Message is sent.";
             }
             else {
                 return "Message could not be sent. You are not friend with receiver.";
