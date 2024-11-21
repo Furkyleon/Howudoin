@@ -49,24 +49,23 @@ public class FriendRequestService {
     // accepting request function
     public String acceptRequest(String senderNickname, String receiverNickname){
         FriendRequest request;
-        if (friendRequestRepository.existsBySenderAndReceiver(senderNickname, receiverNickname)) {
-            request = friendRequestRepository.findBySenderAndReceiver(senderNickname, receiverNickname).get();
+        request = friendRequestRepository.findBySenderAndReceiver(senderNickname, receiverNickname).get();
 
-            friendRequestRepository.delete(request);
-            request.setAccepted(true);
-            friendRequestRepository.save(request);
+        friendRequestRepository.delete(request);
+        request.setAccepted(true);
+        friendRequestRepository.save(request);
 
-            userService.addFriend(request);
-            return "Request has been accepted.";
-        }
-        else {
-            return "There is no such request.";
-        }
+        userService.addFriend(request);
+        return "Request has been accepted.";
     }
 
     // getting friends function
     public List<String> getFriends(String nickname) {
         return userService.getFriends(nickname);
+    }
+
+    public boolean checkExist(String senderNickname, String receiverNickname) {
+        return friendRequestRepository.existsBySenderAndReceiver(senderNickname, receiverNickname);
     }
 
     public boolean checkRequest(String senderNickname, String receiverNickname) {

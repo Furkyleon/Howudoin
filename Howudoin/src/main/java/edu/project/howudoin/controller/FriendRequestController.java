@@ -1,6 +1,7 @@
 package edu.project.howudoin.controller;
 
 import edu.project.howudoin.model.FriendRequest;
+import edu.project.howudoin.repository.FriendRequestRepository;
 import edu.project.howudoin.service.FriendRequestService;
 import edu.project.howudoin.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,17 +43,22 @@ public class FriendRequestController {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
-        boolean check = friendRequestService.checkRequest(senderNickname, receiverNickname);
+        if (friendRequestService.checkExist(senderNickname, receiverNickname)){
+            boolean check = friendRequestService.checkRequest(senderNickname, receiverNickname);
 
-        if (check) {
-            if (jwtUtil.validateToken(jwt, email)) {
-                return friendRequestService.acceptRequest(senderNickname, receiverNickname);
-            } else {
-                throw new RuntimeException("Invalid Token");
+            if (check) {
+                if (jwtUtil.validateToken(jwt, email)) {
+                    return friendRequestService.acceptRequest(senderNickname, receiverNickname);
+                } else {
+                    throw new RuntimeException("Invalid Token");
+                }
+            }
+            else {
+                return "You are already friend with " + receiverNickname + ".";
             }
         }
         else {
-            return "You are already friend with " + receiverNickname + ".";
+            return "There is no such request.";
         }
     }
 
