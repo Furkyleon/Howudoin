@@ -68,4 +68,14 @@ public class FriendRequestService {
     public List<String> getFriends(String nickname) {
         return userService.getFriends(nickname);
     }
+
+    public boolean checkRequest(String senderNickname, String receiverNickname) {
+        FriendRequest request = friendRequestRepository.findBySenderAndReceiver(senderNickname, receiverNickname).get();
+        if (request.isAccepted()) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
 }

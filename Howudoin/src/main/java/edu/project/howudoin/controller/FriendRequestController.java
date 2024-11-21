@@ -42,10 +42,17 @@ public class FriendRequestController {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
-        if (jwtUtil.validateToken(jwt, email)) {
-            return friendRequestService.acceptRequest(senderNickname, receiverNickname);
-        } else {
-            throw new RuntimeException("Invalid Token");
+        boolean check = friendRequestService.checkRequest(senderNickname, receiverNickname);
+
+        if (check) {
+            if (jwtUtil.validateToken(jwt, email)) {
+                return friendRequestService.acceptRequest(senderNickname, receiverNickname);
+            } else {
+                throw new RuntimeException("Invalid Token");
+            }
+        }
+        else {
+            return "You are already friend with " + receiverNickname + ".";
         }
     }
 
