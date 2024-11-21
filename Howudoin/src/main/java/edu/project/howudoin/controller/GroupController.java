@@ -9,6 +9,7 @@ import edu.project.howudoin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -30,8 +31,24 @@ public class GroupController {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
-        boolean check = userService.userCheck(group.getCreatorName());
-        if (check) {
+        boolean checkCreator = userService.userCheck(group.getCreatorName());
+        List<String> wrongMembers = new ArrayList<>();
+        boolean checkMembers = true;
+
+        for (int i=0; i<group.getMembers().size(); i++) {
+            if (!userService.userCheck(group.getMembers().get(i))) {
+                checkMembers = false;
+                wrongMembers.add(group.getMembers().get(i));
+            }
+        }
+
+        if (!checkCreator) {
+            return "The creator user " + group.getCreatorName() + " is not a valid user.";
+        }
+        else if (!checkMembers) {
+            return "These member(s) are not a valid user: " + wrongMembers;
+        }
+        else {
             if (jwtUtil.validateToken(jwt, email)) {
                 int id = groupService.generateGroupId();
                 group.setId(id);
@@ -42,9 +59,6 @@ public class GroupController {
             } else {
                 throw new RuntimeException("Invalid Token");
             }
-        }
-        else {
-            return "There is no user that named " + group.getCreatorName() + ".";
         }
     }
 
@@ -118,19 +132,16 @@ public class GroupController {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
-        // Validate the token
         if (!jwtUtil.validateToken(jwt, email)) {
             throw new RuntimeException("Invalid Token");
         }
 
         Group group = groupService.getGroup(groupId);
 
-        // Check if the user is a member of the group
         if (!group.getMembers().contains(userService.getUserByEmail(email).getNickname())) {
             throw new RuntimeException("You are not a member of this group.");
         }
 
-        // Retrieve and print messages
         return group.getMessages();
     }
 
@@ -142,19 +153,16 @@ public class GroupController {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
-        // Validate the token
         if (!jwtUtil.validateToken(jwt, email)) {
             throw new RuntimeException("Invalid Token");
         }
 
         Group group = groupService.getGroup(groupId);
 
-        // Check if the user is a member of the group
         if (!group.getMembers().contains(userService.getUserByEmail(email).getNickname())) {
             throw new RuntimeException("You are not a member of this group.");
         }
 
-        // Retrieve and print group members
         return group.getMembers();
     }
 

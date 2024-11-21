@@ -36,9 +36,9 @@ public class FriendRequestService {
             boolean check2 = friendRequestRepository.existsBySenderAndReceiver(receiver, sender);
 
             if (check1) {
-                return "You have already sent an request to receiver.";
+                return "You have already sent an request to this receiver.";
             } else if (check2) {
-                return "The receiver already sent an request to you. You can accept the request.";
+                return "This receiver already sent an request to you. You can accept the request.";
             } else {
                 friendRequestRepository.save(request);
                 return "Request has been sent.";

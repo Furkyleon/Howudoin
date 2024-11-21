@@ -39,7 +39,7 @@ public class MessageService {
                 return "Message is sent.";
             }
             else {
-                return "Message could not be sent. You are not friend with receiver.";
+                return "Message could not be sent. You are not friend with this receiver.";
             }
         }
     }

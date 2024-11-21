@@ -21,6 +21,7 @@ public class GroupService {
         return (int) groupRepository.count();
     }
 
+    // generating message id
     public int generateMessageId(){
         return (int) messageRepository.count();
     }
@@ -47,6 +48,7 @@ public class GroupService {
         groupRepository.delete(group);
         group.getMessages().add(message);
         groupRepository.save(group);
+        messageRepository.save(message);
     }
 
     // checking if a member is in a group or not
