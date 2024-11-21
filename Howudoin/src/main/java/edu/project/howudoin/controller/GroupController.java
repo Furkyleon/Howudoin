@@ -31,10 +31,8 @@ public class GroupController {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
-        boolean checkCreator = userService.userCheck(group.getCreatorName());
         List<String> wrongMembers = new ArrayList<>();
         boolean checkMembers = true;
-
         for (int i=0; i<group.getMembers().size(); i++) {
             if (!userService.userCheck(group.getMembers().get(i))) {
                 checkMembers = false;
@@ -42,10 +40,7 @@ public class GroupController {
             }
         }
 
-        if (!checkCreator) {
-            return "The creator user " + group.getCreatorName() + " is not a valid user.";
-        }
-        else if (!checkMembers) {
+        if (!checkMembers) {
             return "These member(s) are not a valid user: " + wrongMembers;
         }
         else {
@@ -102,23 +97,12 @@ public class GroupController {
         String email = jwtUtil.extractEmail(jwt);
 
         if (jwtUtil.validateToken(jwt, email)) {
-            boolean check1 = userService.userCheck(message.getSender());
-            boolean check2 = groupService.memberCheck(groupId, message.getSender());
-
-            if (check1 && check2) {
-                int id = groupService.generateMessageId();
-                message.setId(id);
-                message.setReceiver(groupService.getGroup(groupId).getGroupName());
-                Group group = groupService.getGroup(groupId);
-                groupService.sendMessage(group, message);
-                return "Message is sent to the group.";
-            }
-            else if (check1) {
-                return "This user is not in this group.";
-            }
-            else {
-                return "There is no such user named " + message.getSender() + ".";
-            }
+            int id = groupService.generateMessageId();
+            message.setId(id);
+            message.setReceiver(groupService.getGroup(groupId).getGroupName());
+            Group group = groupService.getGroup(groupId);
+            groupService.sendMessage(group, message);
+            return "Message is sent to the group.";
         } else {
             throw new RuntimeException("Invalid Token");
         }
@@ -137,11 +121,6 @@ public class GroupController {
         }
 
         Group group = groupService.getGroup(groupId);
-
-        if (!group.getMembers().contains(userService.getUserByEmail(email).getNickname())) {
-            throw new RuntimeException("You are not a member of this group.");
-        }
-
         return group.getMessages();
     }
 
@@ -158,11 +137,6 @@ public class GroupController {
         }
 
         Group group = groupService.getGroup(groupId);
-
-        if (!group.getMembers().contains(userService.getUserByEmail(email).getNickname())) {
-            throw new RuntimeException("You are not a member of this group.");
-        }
-
         return group.getMembers();
     }
 
