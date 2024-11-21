@@ -52,7 +52,6 @@ public class GroupController {
                 for (int i=0; i<group.getMembers().size(); i++) {
                     userService.addToGroups(group.getMembers().get(i), group.getGroupName());
                 }
-                userService.addToGroups(group.getCreatorName(), group.getGroupName());
 
                 groupService.saveGroup(group);
                 return "Group is created.";
