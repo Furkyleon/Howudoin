@@ -1,13 +1,25 @@
-import { Text, View, StyleSheet } from "react-native";
-import { Link } from "expo-router";
+import { Image, Text, View, StyleSheet, Pressable} from "react-native";
+import { router } from "expo-router";
+
+function NavigateToRegister(){
+  router.push("/register");
+}
+
+function NavigateToLogin(){
+  router.push("/login");
+}
 
 export default function Index() {
   return (
     <View style={styles.container}>
+      <Image style={styles.image} source={require("C:\\Users\\HUAWEI\\Repositories\\cs310-project\\Frontend\\assets\\images\\howudoin.jpg")} />
       <Text style={styles.text}>Welcome to Howudoin!</Text>
-      <Link href="/loginregister" style={styles.button}>
-        Go to Login / Register page
-      </Link>
+        <Pressable style={styles.button1} onPress={NavigateToRegister}>
+          <Text style={styles.buttontext}> Register </Text>
+        </Pressable>
+      <Pressable style={styles.button2} onPress={NavigateToLogin}>
+        <Text style={styles.buttontext}> Login </Text>
+      </Pressable>
     </View>
   );
 }
@@ -19,12 +31,39 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  image: {
+    width: 210,
+    height: 150,
+    marginBottom: 30,
+    borderRadius: 20,
+    borderColor: "#fff",
+    borderWidth: 1,
+  },
   text: {
     color: "#fff",
+    fontSize: 30,
+    marginBottom: 15,
   },
-  button: {
-    fontSize: 20,
-    textDecorationLine: "underline",
+  button2: {
+    borderRadius: 20,
+    backgroundColor: "#6e85b6",
+    width: 200,
+    height: 50,
+    marginTop: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  button1: {
+    borderRadius: 20,
+    backgroundColor: "#55af55",
+    width: 200,
+    height: 50,
+    marginTop: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttontext: {
     color: "#fff",
+    fontSize: 15,
   },
 });
