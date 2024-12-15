@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="d3ea4858-f6b2-4977-9759-76d3a90595c3" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../Howudoin/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/HowudoinApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/controller/FriendRequestController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/controller/GroupController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/controller/MessageController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/controller/UserController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/model/FriendRequest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/model/Group.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/model/Message.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/model/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/repository/FriendRequestRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/repository/GroupRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/repository/MessageRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/repository/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/security/JwtRequestFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/security/JwtUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/security/SecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/service/FriendRequestService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/service/GroupService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/service/MessageService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/java/edu/project/howudoin/service/UserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Howudoin/src/test/java/edu/project/howudoin/HowudoinApplicationTests.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 3
+}]]></component>
+  <component name="ProjectId" id="2qG2kKm4XFZHdFEkg8C15UectEm" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "C:\\Users\\HUAWEI\\Repositories\\cs310-project\\Frontend\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-WS-243.22562.112" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d3ea4858-f6b2-4977-9759-76d3a90595c3" name="Changes" comment="" />
+      <created>1734274734726</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1734274734726</updated>
+      <workItem from="1734274736659" duration="161000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
