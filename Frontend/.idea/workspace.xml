@@ -5,12 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3ea4858-f6b2-4977-9759-76d3a90595c3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/register.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/howudoin.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend/src/main/java/edu/project/howudoin/configuration/WebConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/edu/project/howudoin/controller/FriendRequestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/edu/project/howudoin/controller/FriendRequestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Backend/src/main/java/edu/project/howudoin/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Backend/src/main/java/edu/project/howudoin/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/loginregister.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/register.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/register.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,10 +24,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 3
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="2qG2kKm4XFZHdFEkg8C15UectEm" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -31,7 +35,9 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
     "last_opened_file_path": "C:/Users/HUAWEI/Repositories/cs310-project/Frontend/app",
     "node.js.detected.package.eslint": "true",
@@ -69,7 +75,11 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1734274734726</updated>
-      <workItem from="1734274736659" duration="9817000" />
+      <workItem from="1734274736659" duration="10022000" />
+      <workItem from="1734383901244" duration="245000" />
+      <workItem from="1734439409360" duration="33000" />
+      <workItem from="1734464683481" duration="141000" />
+      <workItem from="1734548133758" duration="4796000" />
     </task>
     <servers />
   </component>

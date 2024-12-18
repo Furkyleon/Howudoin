@@ -1,12 +1,57 @@
 import {Text, View, StyleSheet, TextInput, Pressable, Alert} from 'react-native';
 import {useState} from "react";
+import {router} from "expo-router";
 
-export default function Login() {
-    const [username, setUsername] = useState("");
+export default function Register() {
+    const [name, setName] = useState("");
+    const [lastname, setLastname] = useState("");
+    const [nickname, setNickname] = useState("");
     const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
 
-    function register(){
-        Alert.alert("Successfully registered!")
+    // response.json sıkıntısı var, backendde return'ler string döndürüyor onu düzeltmek lazım
+    async function register() {
+        if (!name || !lastname || !nickname || !email || !password) {
+            Alert.alert("Error", "Please fill out all fields.");
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            Alert.alert("Error", "Please enter a valid email address.");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://192.168.96.1:8080/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ name, lastname, nickname, email, password })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            Alert.alert("Successfully registered!");
+
+            setName("");
+            setLastname("");
+            setNickname("");
+            setPassword("");
+            setEmail("");
+
+            router.push("/login");
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error("Fetch Error:", error.message);
+            } else {
+                console.error("Unexpected Error:", error);
+            }
+            Alert.alert("Error", "Registration failed. Please try again.");
+        }
     }
 
     return (
@@ -16,9 +61,24 @@ export default function Login() {
             </Text>
 
             <Text style={styles.text}>
-                Username:
+                Name:
             </Text>
-            <TextInput style={styles.input} onChangeText={(x)=>setUsername(x)} placeholder={"Enter an username..."}></TextInput>
+            <TextInput style={styles.input} onChangeText={(x)=>setName(x)} placeholder={"Enter a name..."}></TextInput>
+
+            <Text style={styles.text}>
+                Lastname:
+            </Text>
+            <TextInput style={styles.input} onChangeText={(x)=>setLastname(x)} placeholder={"Enter a lastname..."}></TextInput>
+
+            <Text style={styles.text}>
+                Nickname:
+            </Text>
+            <TextInput style={styles.input} onChangeText={(x)=>setNickname(x)} placeholder={"Enter a nickname..."}></TextInput>
+
+            <Text style={styles.text}>
+                Email:
+            </Text>
+            <TextInput style={styles.input} onChangeText={(x)=>setEmail(x)} placeholder={"Enter an email..."}></TextInput>
 
             <Text style={styles.text}>
                 Password:

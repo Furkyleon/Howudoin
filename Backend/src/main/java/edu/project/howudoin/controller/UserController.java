@@ -19,7 +19,7 @@ public class UserController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // POST /register: Register a new user (with name, last name, email, password)
+    // POST /register: Register a new user (with name, last name, nickname, email and password)
     @PostMapping("/register")
     public String register(@RequestBody User user) {
         int id = userService.generateUserId();

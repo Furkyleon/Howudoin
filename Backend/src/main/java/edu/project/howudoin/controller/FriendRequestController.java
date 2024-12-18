@@ -1,7 +1,6 @@
 package edu.project.howudoin.controller;
 
 import edu.project.howudoin.model.FriendRequest;
-import edu.project.howudoin.repository.FriendRequestRepository;
 import edu.project.howudoin.service.FriendRequestService;
 import edu.project.howudoin.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;

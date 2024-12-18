@@ -2,24 +2,23 @@ import {Text, View, StyleSheet, TextInput, Pressable, Alert} from 'react-native'
 import {useState} from "react";
 
 export default function Login() {
-    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     function login(){
         Alert.alert("Successfully logged in!")
+
+
+
     }
+
+
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>
                 Login Page
             </Text>
-
-            <Text style={styles.text}>
-                Username:
-            </Text>
-            <TextInput style={styles.input} onChangeText={(x)=>setUsername(x)} placeholder={"Enter an username..."}></TextInput>
 
             <Text style={styles.text}>
                 Email:
