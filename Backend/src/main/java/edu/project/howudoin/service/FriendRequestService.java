@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FriendRequestService {
@@ -76,5 +77,9 @@ public class FriendRequestService {
         else {
             return true;
         }
+    }
+
+    public List<FriendRequest> getPendingRequests(String receiverNickname) {
+       return friendRequestRepository.findByReceiver(receiverNickname).get();
     }
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { View, Text, StyleSheet, TextInput, Pressable, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,7 +12,23 @@ interface APIResponse<T> {
 export default function AddFriend() {
   const router = useRouter();
   const [receiver, setFriendNickname] = useState<string>("");
-  const sender = AsyncStorage.getItem("nickname");
+  const [sender, setSenderNickname] = useState<string>("");
+
+
+  useEffect(() => {
+    // Retrieve the stored nickname when the component mounts
+    async function fetchNickname() {
+      const storedNickname = await AsyncStorage.getItem("nickname");
+      if (storedNickname) {
+        setSenderNickname(storedNickname);
+      } else {
+        Alert.alert("Error", "No nickname found. Please login again.");
+        router.push("/login");
+      }
+    }
+
+    fetchNickname();
+  }, []);
 
   async function getToken(): Promise<string | null> {
     return AsyncStorage.getItem('token');
@@ -24,6 +40,9 @@ export default function AddFriend() {
       return;
     }
 
+    console.log(sender);
+    console.log(receiver);
+
     try {
       const token = await getToken();
       if (!token) {
@@ -32,7 +51,7 @@ export default function AddFriend() {
         return;
       }
 
-      const response = await fetch("http://localhost:8080/friends/add", {
+      const response = await fetch("http://192.168.96.1:8080/friends/add", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -61,17 +80,8 @@ export default function AddFriend() {
     }
   }
 
-  function goToMessages() {
-    router.push("/message");
-  }
-
   return (
     <View style={styles.container}>
-      {/* Back to Messages text button at the top-left */}
-      <Pressable style={styles.backButton} onPress={goToMessages}>
-        <Text style={styles.backButtonText}>Back to Messages</Text>
-      </Pressable>
-
       <Text style={styles.title}>Add a Friend</Text>
 
       <Text style={styles.label}>Friend's Nickname:</Text>

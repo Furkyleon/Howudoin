@@ -12,7 +12,7 @@ function NavigateToLogin(){
 export default function Index() {
   return (
     <View style={styles.container}>
-      <Image style={styles.image} source={require("/Users/efesozer/Desktop/cs310_project/cs310-project/Frontend/assets/images/howudoin.jpg")} />
+      <Image style={styles.image} source={require("../assets/images/howudoin.jpg")} />
       <Text style={styles.text}>Welcome to Howudoin!</Text>
         <Pressable style={styles.button1} onPress={NavigateToRegister}>
           <Text style={styles.buttontext}> Register </Text>

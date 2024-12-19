@@ -4,8 +4,9 @@ import { useRouter } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Message {
-  senderNickname: string;
-  text: string;
+  sender: string;
+  receiver: string;
+  content: string;
 }
 
 interface APIResponse<T> {
@@ -14,7 +15,7 @@ interface APIResponse<T> {
   data: T;
 }
 
-export default function Message() {
+export default function MainPage() {
   const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -33,7 +34,7 @@ export default function Message() {
           return;
         }
 
-        const response = await fetch("http://localhost:8080/messages", {
+        const response = await fetch("http://192.168.96.1:8080/messages", {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,
@@ -62,17 +63,12 @@ export default function Message() {
 
   const renderMessage = ({ item }: { item: Message }) => (
     <View style={styles.messageContainer}>
-      <Text style={styles.senderName}>{item.senderNickname}</Text>
-      <Text style={styles.messageText}>{item.text}</Text>
+      <Text style={styles.senderName}>{item.receiver}</Text>
     </View>
   );
 
-  function handleAddFriend() {
-    router.push("/addfriend");
-  }
-
   function handleNewMessageBox() {
-    Alert.alert("New Message", "Create new message box flow goes here.");
+    Alert.alert("New Chat", "Create new message box flow goes here.");
   }
 
   if (loading) {
@@ -85,32 +81,27 @@ export default function Message() {
 
   return (
     <View style={styles.container}>
-      {/* Keep the Add Friend and New Message buttons */}
-      <View style={styles.topLeftContainer}>
-        <Pressable style={styles.topButton} onPress={handleAddFriend}>
-          <Text style={styles.topButtonText}>Add Friend</Text>
-        </Pressable>
-        <Pressable style={styles.topButton} onPress={handleNewMessageBox}>
-          <Text style={styles.topButtonText}>New Message</Text>
-        </Pressable>
-      </View>
-
-      <Text style={styles.title}>Messages</Text>
+      <Text style={styles.title}>Chats</Text>
       {messages.length === 0 ? (
         <Text style={styles.noMessages}>No messages yet.</Text>
       ) : (
         <FlatList
           data={messages}
-          keyExtractor={(item, index) => `${index}-${item.senderNickname}`}
+          keyExtractor={(item, index) => `${index}-${item.sender}`}
           renderItem={renderMessage}
         />
       )}
+
+      <View style={styles.topLeftContainer}>
+        <Pressable style={styles.topButton} onPress={handleNewMessageBox}>
+          <Text style={styles.topButtonText}>New Chat</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  // Keep your original styling
   container: {
     flex: 1,
     backgroundColor: "#25292e",
@@ -124,17 +115,16 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   topLeftContainer: {
-    position: "absolute",
-    top: 50,
-    left: 20,
-    flexDirection: "row"
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 10,
   },
   topButton: {
     marginRight: 10
   },
   topButtonText: {
     color: "white",
-    fontSize: 16,
+    fontSize: 20,
     textDecorationLine: "underline"
   },
   title: {

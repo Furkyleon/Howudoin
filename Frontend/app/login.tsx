@@ -10,9 +10,9 @@ interface APIResponse<T> {
 }
 
 export default function Login() {
+  const [nickname, setNickname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [nickname, setNickname] = useState("");
 
   async function storeToken(token: string) {
     await AsyncStorage.setItem('token', token);
@@ -25,7 +25,7 @@ export default function Login() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/login", {
+      const response = await fetch("http://192.168.96.1:8080/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, nickname, password })
@@ -40,8 +40,8 @@ export default function Login() {
       if (result.status === 1) {
         const token = result.data; 
         await storeToken(token);
-        // Alert.alert("Success", "Logged in successfully!");
-        router.push("/message");
+        await AsyncStorage.setItem("nickname", nickname);
+        router.push("/mainpage");
       } else {
         Alert.alert("Error:", result.data || "Login failed. Please try again.");
       }
