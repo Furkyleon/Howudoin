@@ -67,6 +67,10 @@ public class UserService {
         return userRepository.findByNickname(nickname).get();
     }
 
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).get();
+    }
+
     // user check
     public boolean userCheck(String nickname){
         return userRepository.existsByNickname(nickname);
@@ -126,10 +130,6 @@ public class UserService {
         userRepository.delete(receiverUser);
         receiverUser.getMessages().add(message);
         userRepository.save(receiverUser);
-    }
-
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).get();
     }
 
     /*

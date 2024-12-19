@@ -4,24 +4,30 @@ import edu.project.howudoin.model.User;
 import edu.project.howudoin.repository.UserRepository;
 import edu.project.howudoin.security.JwtUtil;
 import edu.project.howudoin.service.UserService;
+import edu.project.howudoin.utils.APIResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-
+import java.util.Optional;
 
 @RestController
 public class UserController {
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private UserService userService;
+
     @Autowired
     private JwtUtil jwtUtil;
 
-    // POST /register: Register a new user (with name, last name, nickname, email and password)
+    // POST /register: Register a new user
     @PostMapping("/register")
-    public String register(@RequestBody User user) {
+    public ResponseEntity<APIResponse<String>> register(@RequestBody User user) {
         int id = userService.generateUserId();
         user.setId(id);
         user.setFriends(new ArrayList<>());
@@ -29,42 +35,55 @@ public class UserController {
 
         String email = user.getEmail();
         String nickname = user.getNickname();
-        boolean check1 = userRepository.existsByEmail(email);
-        boolean check2 = userRepository.existsByNickname(nickname);
+        boolean emailExists = userRepository.existsByEmail(email);
+        boolean nicknameExists = userRepository.existsByNickname(nickname);
 
-        if (check1 && check2) {
-            return "Both email and nickname are already registered.";
-        }
-        else if (check1) {
-            return "Email already registered.";
-        }
-        else if (check2) {
-            return "Nickname already registered.";
-        }
-        else {
+        if (emailExists && nicknameExists) {
+            return ResponseEntity.ok(new APIResponse<>(0, "ERROR", "Both email and nickname are already registered."));
+        } else if (emailExists) {
+            return ResponseEntity.ok(new APIResponse<>(0, "ERROR", "Email already registered."));
+        } else if (nicknameExists) {
+            return ResponseEntity.ok(new APIResponse<>(0, "ERROR", "Nickname already registered."));
+        } else {
             userRepository.save(user);
-            return "User is registered successfully.";
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new APIResponse<>(1, "SUCCESS", "User is registered successfully."));
         }
     }
 
-    // POST /login: Authenticate and login a user (with email and password)
+    // POST /login: Authenticate and login a user
     @PostMapping("/login")
-    public String login(@RequestBody User userBody) {
+    public ResponseEntity<APIResponse<String>> login(@RequestBody User userBody) {
         String email = userBody.getEmail();
+        String nickname = userBody.getNickname();
         String password = userBody.getPassword();
 
-        boolean check = userRepository.existsByEmail(email);
-        if (check){
-            User user = userRepository.findByEmail(email).get();
-            if (user.getPassword().equals(password)) {
-                return jwtUtil.generateToken(user.getEmail());
-            }
-            else {
-                return "Incorrect password!";
+        if (!userRepository.existsByEmail(email)) {
+            return ResponseEntity.ok(new APIResponse<>(0, "Incorrect email!", null));
+        }
+        else if (!userRepository.existsByNickname(nickname)) {
+            return ResponseEntity.ok(new APIResponse<>(0, "Incorrect nickname!", null));
+        }
+
+        Optional<User> optionalUser1 = userRepository.findByEmail(email);
+        Optional<User> optionalUser2 = userRepository.findByNickname(nickname);
+        if (optionalUser1.equals(optionalUser2)) {
+            if (optionalUser1.isPresent()) {
+                User user = optionalUser1.get();
+                if (user.getPassword().equals(password)) {
+                    String token = jwtUtil.generateToken(user.getEmail());
+                    return ResponseEntity.ok(new APIResponse<>(1, "Successfully logined!", token));
+                } else {
+                    return ResponseEntity.ok(new APIResponse<>(0, "Incorrect password!", null));
+                }
+            } else {
+                // Should not reach here if existsByEmail is true, but just in case:
+                return ResponseEntity.ok(new APIResponse<>(0, "User not found.", null));
             }
         }
         else {
-            return "Incorrect email!";
+            return ResponseEntity.ok(new APIResponse<>(0, "Email and nickname are not matched.!", null));
         }
+
     }
 }

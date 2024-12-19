@@ -2,11 +2,14 @@ package edu.project.howudoin.controller;
 
 import edu.project.howudoin.model.Group;
 import edu.project.howudoin.model.Message;
-import edu.project.howudoin.service.GroupService;
 import edu.project.howudoin.security.JwtUtil;
+import edu.project.howudoin.service.GroupService;
 import edu.project.howudoin.service.MessageService;
 import edu.project.howudoin.service.UserService;
+import edu.project.howudoin.utils.APIResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -14,6 +17,7 @@ import java.util.List;
 
 @RestController
 public class GroupController {
+
     @Autowired
     private GroupService groupService;
     @Autowired
@@ -23,125 +27,123 @@ public class GroupController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // POST /groups/create: Creates a new group with a given name and members.
+    // POST /groups/create: Creates a new group
     @PostMapping("/groups/create")
-    public String createGroup(@RequestHeader("Authorization") String token,
-                              @RequestBody Group group)
-    {
+    public ResponseEntity<APIResponse<String>> createGroup(@RequestHeader("Authorization") String token,
+                                                           @RequestBody Group group) {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
-        List<String> wrongMembers = new ArrayList<>();
-        boolean checkMembers = true;
-        for (int i=0; i<group.getMembers().size(); i++) {
-            if (!userService.userCheck(group.getMembers().get(i))) {
-                checkMembers = false;
-                wrongMembers.add(group.getMembers().get(i));
+        if (!jwtUtil.validateToken(jwt, email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new APIResponse<>(0, "ERROR", "Invalid Token"));
+        }
+
+        List<String> invalidMembers = new ArrayList<>();
+        for (String member : group.getMembers()) {
+            if (!userService.userCheck(member)) {
+                invalidMembers.add(member);
             }
         }
 
-        if (!checkMembers) {
-            return "These member(s) are not a valid user: " + wrongMembers;
+        if (!invalidMembers.isEmpty()) {
+            return ResponseEntity.ok(new APIResponse<>(0, "ERROR",
+                    "These member(s) are not valid users: " + invalidMembers));
         }
-        else {
-            if (jwtUtil.validateToken(jwt, email)) {
-                int id = groupService.generateGroupId();
-                group.setId(id);
-                group.getMembers().add(group.getCreatorName());
 
-                for (int i=0; i<group.getMembers().size(); i++) {
-                    userService.addToGroups(group.getMembers().get(i), group.getGroupName());
-                }
+        int id = groupService.generateGroupId();
+        group.setId(id);
+        group.getMembers().add(group.getCreatorName());
 
-                groupService.saveGroup(group);
-                return "Group is created.";
-            } else {
-                throw new RuntimeException("Invalid Token");
-            }
+        for (String member : group.getMembers()) {
+            userService.addToGroups(member, group.getGroupName());
         }
+
+        groupService.saveGroup(group);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new APIResponse<>(1, "SUCCESS", "Group is created."));
     }
 
-    // POST /groups/:groupId/add-member: Adds a new member to an existing group.
+    // POST /groups/{groupId}/add-member: Adds a new member to an existing group.
     @PostMapping("/groups/{groupId}/add-member")
-    public String addMemberToGroup(@RequestHeader("Authorization") String token,
-                                   @PathVariable("groupId") int groupId,
-                                   @RequestParam("memberName") String memberName)
-    {
+    public ResponseEntity<APIResponse<String>> addMemberToGroup(@RequestHeader("Authorization") String token,
+                                                                @PathVariable("groupId") int groupId,
+                                                                @RequestParam("memberName") String memberName) {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
-        if (jwtUtil.validateToken(jwt, email)) {
-            boolean check1 = userService.userCheck(memberName);
-            boolean check2 = groupService.memberCheck(groupId, memberName);
-
-            if (check2){
-                return "This member is already in the group.";
-            }
-            else if (check1){
-                Group group = groupService.getGroup(groupId);
-                userService.addToGroups(memberName, group.getGroupName());
-                groupService.addMember(group, memberName);
-                return "Member is added to the group.";
-            }
-            else {
-                return "There is no such user named " + memberName + ".";
-            }
-        } else {
-            throw new RuntimeException("Invalid Token");
+        if (!jwtUtil.validateToken(jwt, email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new APIResponse<>(0, "ERROR", "Invalid Token"));
         }
+
+        boolean userExists = userService.userCheck(memberName);
+        boolean memberAlreadyInGroup = groupService.memberCheck(groupId, memberName);
+
+        if (memberAlreadyInGroup) {
+            return ResponseEntity.ok(new APIResponse<>(0, "ERROR", "This member is already in the group."));
+        } else if (!userExists) {
+            return ResponseEntity.ok(new APIResponse<>(0, "ERROR", "There is no such user named " + memberName + "."));
+        }
+
+        Group group = groupService.getGroup(groupId);
+        userService.addToGroups(memberName, group.getGroupName());
+        groupService.addMember(group, memberName);
+        return ResponseEntity.ok(new APIResponse<>(1, "SUCCESS", "Member is added to the group."));
     }
 
-    // POST /groups/:groupId/send: Sends a message to all members of the specified group.
+    // POST /groups/{groupId}/send: Sends a message to all members of the specified group.
     @PostMapping("/groups/{groupId}/send")
-    public String sendMessageToGroup(@RequestHeader("Authorization") String token,
-                                     @PathVariable("groupId") int groupId,
-                                     @RequestBody Message message)
-    {
+    public ResponseEntity<APIResponse<String>> sendMessageToGroup(@RequestHeader("Authorization") String token,
+                                                                  @PathVariable("groupId") int groupId,
+                                                                  @RequestBody Message message) {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
-        if (jwtUtil.validateToken(jwt, email)) {
-            int id = groupService.generateMessageId();
-            message.setId(id);
-            message.setReceiver(groupService.getGroup(groupId).getGroupName());
-            Group group = groupService.getGroup(groupId);
-            groupService.sendMessage(group, message);
-            return "Message is sent to the group.";
-        } else {
-            throw new RuntimeException("Invalid Token");
+        if (!jwtUtil.validateToken(jwt, email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new APIResponse<>(0, "ERROR", "Invalid Token"));
         }
+
+        int id = groupService.generateMessageId();
+        message.setId(id);
+        message.setReceiver(groupService.getGroup(groupId).getGroupName());
+        Group group = groupService.getGroup(groupId);
+        groupService.sendMessage(group, message);
+
+        return ResponseEntity.ok(new APIResponse<>(1, "SUCCESS", "Message is sent to the group."));
     }
 
-    // GET /groups/:groupId/messages: Retrieves the message history for the specified group.
+    // GET /groups/{groupId}/messages: Retrieves the message history for the group.
     @GetMapping("/groups/{groupId}/messages")
-    public List<Message> getMessagesOfGroup(@RequestHeader("Authorization") String token,
-                                            @PathVariable("groupId") int groupId)
-    {
+    public ResponseEntity<APIResponse<List<Message>>> getMessagesOfGroup(@RequestHeader("Authorization") String token,
+                                                                         @PathVariable("groupId") int groupId) {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
         if (!jwtUtil.validateToken(jwt, email)) {
-            throw new RuntimeException("Invalid Token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new APIResponse<>(0, "ERROR", null));
         }
 
         Group group = groupService.getGroup(groupId);
-        return group.getMessages();
+        return ResponseEntity.ok(new APIResponse<>(1, "SUCCESS", group.getMessages()));
     }
 
-    // GET /groups/:groupId/members: Retrieves the list of members for the specified group.
+    // GET /groups/{groupId}/members: Retrieves the list of members for the group.
     @GetMapping("/groups/{groupId}/members")
-    public List<String> getMembersOfGroup(@RequestHeader("Authorization") String token,
-                                          @PathVariable("groupId") int groupId)
-    {
+    public ResponseEntity<APIResponse<List<String>>> getMembersOfGroup(@RequestHeader("Authorization") String token,
+                                                                       @PathVariable("groupId") int groupId) {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
         if (!jwtUtil.validateToken(jwt, email)) {
-            throw new RuntimeException("Invalid Token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new APIResponse<>(0, "ERROR", null));
         }
 
         Group group = groupService.getGroup(groupId);
-        return group.getMembers();
+        return ResponseEntity.ok(new APIResponse<>(1, "SUCCESS", group.getMembers()));
     }
 
     private String extractJwt(String token) {
