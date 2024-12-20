@@ -34,13 +34,13 @@ public class MessageController {
 
         if (!jwtUtil.validateToken(jwt, email)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new APIResponse<>(0, "ERROR", "Invalid Token"));
+                    .body(new APIResponse<>(0, "Invalid Token", null));
         }
 
         int id = messageService.generateMessageId();
         message.setId(id);
         String result = messageService.sendMessage(message);
-        return ResponseEntity.ok(new APIResponse<>(1, "SUCCESS", result));
+        return ResponseEntity.ok(new APIResponse<>(1, result, null));
     }
 
     // GET /messages: Retrieve conversation history
@@ -51,15 +51,15 @@ public class MessageController {
 
         if (!jwtUtil.validateToken(jwt, email)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new APIResponse<>(0, "ERROR", null));
+                    .body(new APIResponse<>(0, "Invalid Token", null));
         }
 
         User user = userService.getUserByEmail(email);
         List<Message> messages = messageService.getMessages(user);
         if (messages.isEmpty()) {
-            return ResponseEntity.ok(new APIResponse<>(0, "ERROR", null));
+            return ResponseEntity.ok(new APIResponse<>(0, "No messages.", messages));
         }
-        return ResponseEntity.ok(new APIResponse<>(1, "SUCCESS", messages));
+        return ResponseEntity.ok(new APIResponse<>(1, "Messages are retrieved successfully!", messages));
     }
 
     private String extractJwt(String token) {

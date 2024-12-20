@@ -39,15 +39,15 @@ public class UserController {
         boolean nicknameExists = userRepository.existsByNickname(nickname);
 
         if (emailExists && nicknameExists) {
-            return ResponseEntity.ok(new APIResponse<>(0, "ERROR", "Both email and nickname are already registered."));
+            return ResponseEntity.ok(new APIResponse<>(0, "Both email and nickname are already registered.", null));
         } else if (emailExists) {
-            return ResponseEntity.ok(new APIResponse<>(0, "ERROR", "Email already registered."));
+            return ResponseEntity.ok(new APIResponse<>(0, "Email already registered.", null));
         } else if (nicknameExists) {
-            return ResponseEntity.ok(new APIResponse<>(0, "ERROR", "Nickname already registered."));
+            return ResponseEntity.ok(new APIResponse<>(0, "Nickname already registered.", null));
         } else {
             userRepository.save(user);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new APIResponse<>(1, "SUCCESS", "User is registered successfully."));
+                    .body(new APIResponse<>(1, "User is registered successfully.", null));
         }
     }
 
@@ -72,7 +72,7 @@ public class UserController {
                 User user = optionalUser1.get();
                 if (user.getPassword().equals(password)) {
                     String token = jwtUtil.generateToken(user.getEmail());
-                    return ResponseEntity.ok(new APIResponse<>(1, "Successfully logined!", token));
+                    return ResponseEntity.ok(new APIResponse<>(1, "Successfully logged in!", token));
                 } else {
                     return ResponseEntity.ok(new APIResponse<>(0, "Incorrect password!", null));
                 }

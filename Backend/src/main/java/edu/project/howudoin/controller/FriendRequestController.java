@@ -22,13 +22,14 @@ public class FriendRequestController {
 
     // POST /friends/add: Send a friend request
     @PostMapping("/friends/add")
-    public APIResponse<String> sendRequest(@RequestHeader("Authorization") String token,
+    public ResponseEntity<APIResponse<String>> sendRequest(@RequestHeader("Authorization") String token,
                                            @RequestBody FriendRequest friendRequest) {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
         if (!jwtUtil.validateToken(jwt, email)) {
-            return new APIResponse<>(0, "ERROR", "Invalid Token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new APIResponse<>(0, "Invalid Token", null));
         }
 
         int id = friendRequestService.generateRequestId();
@@ -37,15 +38,13 @@ public class FriendRequestController {
         FriendRequest request = new FriendRequest(id, senderNickname, receiverNickname, false);
         String resultMessage = friendRequestService.sendRequest(request);
 
-        return new APIResponse<>(1, resultMessage, null);
+        return ResponseEntity.ok(new APIResponse<>(1, resultMessage, null));
     }
 
     // GET /friends/requests: Retrieve pending friend requests
     @GetMapping("/friends/requests")
-    public ResponseEntity<APIResponse<List<FriendRequest>>> getFriendRequests(
-            @RequestHeader("Authorization") String token,
-            @RequestParam("receiverNickname") String receiverNickname) {
-
+    public ResponseEntity<APIResponse<List<FriendRequest>>> getFriendRequests( @RequestHeader("Authorization") String token,
+                                                                               @RequestParam("receiverNickname") String receiverNickname) {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
@@ -72,8 +71,8 @@ public class FriendRequestController {
         String email = jwtUtil.extractEmail(jwt);
 
         if (!jwtUtil.validateToken(jwt, email)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new APIResponse<>(0, "Invalid Token", null));
-        }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new APIResponse<>(0, "Invalid Token", null));}
 
         if (!friendRequestService.checkExist(senderNickname, receiverNickname)) {
             return ResponseEntity.ok(new APIResponse<>(0, "There is no such request.", null));
@@ -85,14 +84,14 @@ public class FriendRequestController {
         }
 
         String result = friendRequestService.acceptRequest(senderNickname, receiverNickname);
-        return ResponseEntity.ok(new APIResponse<>(1, "Friend request accepted successfully.", result));
+        return ResponseEntity.ok(new APIResponse<>(1, result, null));
     }
 
 
     // GET /friends: Retrieve friend list
     @GetMapping("/friends")
     public ResponseEntity<APIResponse<List<String>>> getFriends(@RequestHeader("Authorization") String token,
-                                        @RequestParam String nickname) {
+                                                                @RequestParam("nickname") String nickname) {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
@@ -101,7 +100,7 @@ public class FriendRequestController {
         }
 
         List<String> friends = friendRequestService.getFriends(nickname);
-        return ResponseEntity.ok(new APIResponse<>(1, "Friends retrieved successfully!", friends));
+        return ResponseEntity.ok(new APIResponse<>(1, "Friends are retrieved successfully!", friends));
     }
 
     private String extractJwt(String token) {

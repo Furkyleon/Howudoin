@@ -36,7 +36,7 @@ public class GroupController {
 
         if (!jwtUtil.validateToken(jwt, email)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new APIResponse<>(0, "ERROR", "Invalid Token"));
+                    .body(new APIResponse<>(0, "Invalid Token", null));
         }
 
         List<String> invalidMembers = new ArrayList<>();
@@ -47,8 +47,7 @@ public class GroupController {
         }
 
         if (!invalidMembers.isEmpty()) {
-            return ResponseEntity.ok(new APIResponse<>(0, "ERROR",
-                    "These member(s) are not valid users: " + invalidMembers));
+            return ResponseEntity.ok(new APIResponse<>(0, "These member(s) are not valid users: " + invalidMembers, null));
         }
 
         int id = groupService.generateGroupId();
@@ -61,7 +60,7 @@ public class GroupController {
 
         groupService.saveGroup(group);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new APIResponse<>(1, "SUCCESS", "Group is created."));
+                .body(new APIResponse<>(1, "Group is created.", null));
     }
 
     // POST /groups/{groupId}/add-member: Adds a new member to an existing group.
@@ -74,22 +73,22 @@ public class GroupController {
 
         if (!jwtUtil.validateToken(jwt, email)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new APIResponse<>(0, "ERROR", "Invalid Token"));
+                    .body(new APIResponse<>(0, "Invalid Token", null));
         }
 
         boolean userExists = userService.userCheck(memberName);
         boolean memberAlreadyInGroup = groupService.memberCheck(groupId, memberName);
 
         if (memberAlreadyInGroup) {
-            return ResponseEntity.ok(new APIResponse<>(0, "ERROR", "This member is already in the group."));
+            return ResponseEntity.ok(new APIResponse<>(0, "Invalid Token", null));
         } else if (!userExists) {
-            return ResponseEntity.ok(new APIResponse<>(0, "ERROR", "There is no such user named " + memberName + "."));
+            return ResponseEntity.ok(new APIResponse<>(0, "There is no such user named " + memberName + ".", null));
         }
 
         Group group = groupService.getGroup(groupId);
         userService.addToGroups(memberName, group.getGroupName());
         groupService.addMember(group, memberName);
-        return ResponseEntity.ok(new APIResponse<>(1, "SUCCESS", "Member is added to the group."));
+        return ResponseEntity.ok(new APIResponse<>(1, "Member is added to the group.", null));
     }
 
     // POST /groups/{groupId}/send: Sends a message to all members of the specified group.
@@ -102,7 +101,7 @@ public class GroupController {
 
         if (!jwtUtil.validateToken(jwt, email)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new APIResponse<>(0, "ERROR", "Invalid Token"));
+                    .body(new APIResponse<>(0, "Invalid Token", null));
         }
 
         int id = groupService.generateMessageId();
@@ -111,7 +110,7 @@ public class GroupController {
         Group group = groupService.getGroup(groupId);
         groupService.sendMessage(group, message);
 
-        return ResponseEntity.ok(new APIResponse<>(1, "SUCCESS", "Message is sent to the group."));
+        return ResponseEntity.ok(new APIResponse<>(1, "Message is sent to the group.", null));
     }
 
     // GET /groups/{groupId}/messages: Retrieves the message history for the group.
@@ -123,11 +122,11 @@ public class GroupController {
 
         if (!jwtUtil.validateToken(jwt, email)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new APIResponse<>(0, "ERROR", null));
+                    .body(new APIResponse<>(0, "Invalid Token", null));
         }
 
         Group group = groupService.getGroup(groupId);
-        return ResponseEntity.ok(new APIResponse<>(1, "SUCCESS", group.getMessages()));
+        return ResponseEntity.ok(new APIResponse<>(1, "Messages are retrieved successfully!", group.getMessages()));
     }
 
     // GET /groups/{groupId}/members: Retrieves the list of members for the group.
@@ -139,11 +138,11 @@ public class GroupController {
 
         if (!jwtUtil.validateToken(jwt, email)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new APIResponse<>(0, "ERROR", null));
+                    .body(new APIResponse<>(0, "Invalid Token", null));
         }
 
         Group group = groupService.getGroup(groupId);
-        return ResponseEntity.ok(new APIResponse<>(1, "SUCCESS", group.getMembers()));
+        return ResponseEntity.ok(new APIResponse<>(1, "Members are retrieved successfully!", group.getMembers()));
     }
 
     private String extractJwt(String token) {
