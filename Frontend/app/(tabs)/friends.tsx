@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, Alert, Pressable } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL } from '../../config';
 
 interface APIResponse<T> {
     status: number;
@@ -37,7 +38,7 @@ export default function Friends() {
 
             setNickname(storedNickname);
 
-            const response = await fetch(`http://localhost:8080/friends?nickname=${storedNickname}`, {
+            const response = await fetch(`${API_URL}/friends?nickname=${storedNickname}`, {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -61,6 +62,11 @@ export default function Friends() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleLogout = async () => {
+        await AsyncStorage.clear();
+        router.push("/login");
     };
 
     // Fetch friends list on initial mount
@@ -99,6 +105,12 @@ export default function Friends() {
 
     return (
         <View style={styles.container}>
+            <View style={styles.header}>
+                <Pressable style={styles.logoutButton} onPress={handleLogout}>
+                    <Text style={styles.logoutButtonText}>Logout</Text>
+                </Pressable>
+            </View>
+
             <Text style={styles.title}>Friends</Text>
 
             {friends.length === 0 ? (
@@ -127,6 +139,20 @@ const styles = StyleSheet.create({
         backgroundColor: "#25292e",
         paddingHorizontal: 20,
         paddingTop: 50,
+    },
+    header: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        marginBottom: 10,
+    },
+    logoutButton: {
+        marginRight: 10,
+    },
+    logoutButtonText: {
+        color: "white",
+        fontSize: 16,
+        textDecorationLine: "underline",
     },
     loadingContainer: {
         flex: 1,

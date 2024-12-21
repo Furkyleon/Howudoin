@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, Alert, Pressable, Button } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { API_URL } from "../../config"; // Ensure this points to your API URL configuration
+import { API_URL } from "../../config";
 
 interface APIResponse<T> {
     status: number;

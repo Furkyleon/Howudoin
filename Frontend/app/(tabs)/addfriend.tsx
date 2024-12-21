@@ -49,7 +49,7 @@ export default function AddFriend() {
             return;
         }
 
-        const response = await fetch("http://localhost:8080/friends/add", {
+        const response = await fetch(`${API_URL}/friends/add`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,
