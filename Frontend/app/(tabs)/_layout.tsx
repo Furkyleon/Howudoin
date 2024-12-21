@@ -49,6 +49,13 @@ export default function TabLayout() {
                     headerShown: false
                 }}
             />
+            <Tabs.Screen
+                name="groupmessages"
+                options={{
+                    href: null,
+                    headerShown: false
+                }}
+            />
         </Tabs>
     );
 }
