@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, Alert, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from '../../config';
 
 interface Message {
   sender: string;
@@ -34,7 +35,7 @@ export default function MainPage() {
           return;
         }
 
-        const response = await fetch("http://localhost:8080/messages", {
+        const response = await fetch(`${API_URL}/messages`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,

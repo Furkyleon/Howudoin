@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Text, View, StyleSheet, TextInput, Pressable, Alert } from 'react-native';
 import { router } from "expo-router";
+import { API_URL } from '../config';
 
 interface APIResponse<T> {
   status: number;
@@ -28,7 +29,7 @@ export default function Register() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/register", {
+      const response = await fetch(`${API_URL}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

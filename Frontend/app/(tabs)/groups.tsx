@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, Alert, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from '../../config';
 
 interface APIResponse<T> {
     status: number;
@@ -38,7 +39,7 @@ export default function Groups() {
 
                 setNickname(storedNickname);
 
-                const response = await fetch(`http://localhost:8080/groups?nickname=${storedNickname}`, {
+                const response = await fetch(`${API_URL}/groups?nickname=${storedNickname}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`,

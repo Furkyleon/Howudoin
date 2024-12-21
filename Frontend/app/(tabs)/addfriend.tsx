@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import { View, Text, StyleSheet, TextInput, Pressable, Alert } from "react-native";
 import {router, useRouter} from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from '../../config';
 
 interface APIResponse<T> {
   status: number;
@@ -51,7 +52,7 @@ export default function AddFriend() {
         return;
       }
 
-      const response = await fetch("http://localhost:8080/friends/add", {
+      const response = await fetch(`${API_URL}/friends/add`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,

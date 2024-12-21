@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Text, View, StyleSheet, TextInput, Pressable, Alert } from 'react-native';
 import { router } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from '../config';
 
 interface APIResponse<T> {
   status: number;
@@ -25,7 +26,7 @@ export default function Login() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/login", {
+      const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, nickname, password })

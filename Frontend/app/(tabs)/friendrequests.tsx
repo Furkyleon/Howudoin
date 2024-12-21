@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, Alert, Pressable, Button } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from '../../config';
 
 interface APIResponse<T> {
     status: number;
@@ -43,7 +44,7 @@ export default function FriendRequests() {
 
                 setNickname(storedNickname);
 
-                const response = await fetch(`http://192.168.96.1:8080/friends/requests?receiverNickname=${storedNickname}`, {
+                const response = await fetch(`${API_URL}/friends/requests?receiverNickname=${storedNickname}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -81,7 +82,7 @@ export default function FriendRequests() {
                 return;
             }
 
-            const response = await fetch(`http://localhost:8080/friends/accept?senderNickname=${sender}&receiverNickname=${nickname}`, {
+            const response = await fetch(`${API_URL}/friends/accept?senderNickname=${sender}&receiverNickname=${nickname}`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
