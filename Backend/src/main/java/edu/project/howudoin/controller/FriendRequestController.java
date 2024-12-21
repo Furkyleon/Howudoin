@@ -53,7 +53,10 @@ public class FriendRequestController {
                     .body(new APIResponse<>(0, "Invalid Token", null));
         }
 
-        List<FriendRequest> friendRequests = friendRequestService.getPendingRequests(receiverNickname);
+        List<FriendRequest> friendRequests = friendRequestService.getPendingRequests(receiverNickname)
+                .stream()
+                .filter(request -> !request.isAccepted()) // Exclude accepted requests
+                .toList();;
 
         if (friendRequests.isEmpty()) {
             return ResponseEntity.ok(new APIResponse<>(1, "No pending friend requests.", friendRequests));

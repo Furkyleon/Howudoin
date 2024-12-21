@@ -37,49 +37,48 @@ export default function AddFriend() {
 
   async function handleAddFriend() {
     if (!receiver) {
-      Alert.alert("Error", "Please enter your friend's nickname.");
-      return;
+        Alert.alert("Error", "Please enter your friend's nickname.");
+        return;
     }
-
-    console.log(sender);
-    console.log(receiver);
 
     try {
-      const token = await getToken();
-      if (!token) {
-        Alert.alert("Error", "No token found. Please login again.");
-        router.push("/login");
-        return;
-      }
+        const token = await getToken();
+        if (!token) {
+            Alert.alert("Error", "No token found. Please login again.");
+            router.push("/login");
+            return;
+        }
 
-      const response = await fetch(`${API_URL}/friends/add`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          sender, receiver
-        })
-      });
+        const response = await fetch("http://localhost:8080/friends/add", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ sender, receiver }),
+        });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-      const result: APIResponse<string> = await response.json();
-      if (result.status === 1) {
-        Alert.alert("Success", result.message || "Friend request sent!");
-        setFriendNickname("");
-      } else {
-        Alert.alert("Error", result.data || "Failed to send friend request.");
-      }
+        const result: APIResponse<string> = await response.json();
+        if (result.status === 1) {
+            Alert.alert("Success", result.message || "Friend request sent!");
+            setFriendNickname("");
 
+            // Refresh friends list
+            router.push("/friends"); // Redirect back to the friends list
+        } else {
+            Alert.alert("Error", result.data || "Failed to send friend request.");
+        }
     } catch (error: any) {
-      console.error("Add Friend Error:", error);
-      Alert.alert("Error", "An error occurred while sending the friend request.");
+        console.error("Add Friend Error:", error);
+        Alert.alert("Error", "An error occurred while sending the friend request.");
     }
-  }
+}
+
+
 
   function goToFriends() {
     router.push("/friends");
