@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import { View, Text, StyleSheet, TextInput, Pressable, Alert } from "react-native";
-import { useRouter } from "expo-router";
+import {router, useRouter} from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface APIResponse<T> {
@@ -51,7 +51,7 @@ export default function AddFriend() {
         return;
       }
 
-      const response = await fetch("http://192.168.96.1:8080/friends/add", {
+      const response = await fetch("http://localhost:8080/friends/add", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -80,11 +80,18 @@ export default function AddFriend() {
     }
   }
 
+  function goToFriends() {
+    router.push("/friends");
+  }
+
   return (
     <View style={styles.container}>
+      <Pressable style={styles.noButton} onPress={goToFriends}>
+        <Text style={styles.mainPageText}>Go Back</Text>
+      </Pressable>
+
       <Text style={styles.title}>Add a Friend</Text>
 
-      <Text style={styles.label}>Friend's Nickname:</Text>
       <TextInput
         style={styles.input}
         value={receiver}
@@ -101,12 +108,11 @@ export default function AddFriend() {
 }
 
 const styles = StyleSheet.create({
-  // Keep your original styling
   container: {
     flex: 1,
     backgroundColor: "#25292e",
-    paddingHorizontal: 20,
-    paddingTop: 60,
+    paddingTop: 30,
+    paddingHorizontal: 20
   },
   backButton: {
     position: "absolute",
@@ -123,13 +129,14 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginBottom: 20,
     fontWeight: "bold",
-    alignSelf: "center"
+    alignSelf: "center",
+    marginTop: 40
   },
   label: {
     color: "white",
     fontSize: 16,
     marginBottom: 10,
-    marginTop: 20
+    marginTop: 10,
   },
   input: {
     backgroundColor: "#333",
@@ -140,6 +147,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderWidth: 1,
     borderColor: "#555",
+    textAlign: "center",
   },
   addButton: {
     backgroundColor: "#55af55",
@@ -151,5 +159,15 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: "white",
     fontSize: 16,
-  }
+  },
+  noButton: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+  },
+  mainPageText: {
+    color: "white",
+    fontSize: 16,
+    textDecorationLine: "underline"
+  },
 });

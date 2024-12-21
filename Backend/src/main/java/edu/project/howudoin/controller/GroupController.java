@@ -27,6 +27,22 @@ public class GroupController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    // GET /groups: Retrieve group list
+    @GetMapping("/groups")
+    public ResponseEntity<APIResponse<List<String>>> getAllGroups(@RequestHeader("Authorization") String token,
+                                                                 @RequestParam("nickname") String nickname ) {
+        String jwt = extractJwt(token);
+        String email = jwtUtil.extractEmail(jwt);
+
+        if (!jwtUtil.validateToken(jwt, email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new APIResponse<>(0, "Invalid Token", null));
+        }
+
+        List<String> groups = groupService.getGroups(nickname);
+        return ResponseEntity.ok(new APIResponse<>(1, "Groups are retrieved successfully!", groups));
+    }
+
     // POST /groups/create: Creates a new group
     @PostMapping("/groups/create")
     public ResponseEntity<APIResponse<String>> createGroup(@RequestHeader("Authorization") String token,

@@ -38,7 +38,7 @@ export default function Friends() {
 
                 setNickname(storedNickname);
 
-                const response = await fetch(`http://192.168.96.1:8080/friends?nickname=${storedNickname}`, {
+                const response = await fetch(`http://localhost:8080/friends?nickname=${storedNickname}`, {
                     method: "GET",
                     headers: {
                         "Authorization": `Bearer ${token}`,
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#25292e",
-        paddingTop: 50,
+        paddingTop: 30,
         paddingHorizontal: 20
     },
     loadingContainer: {

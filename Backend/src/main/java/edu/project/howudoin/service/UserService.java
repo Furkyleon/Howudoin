@@ -22,46 +22,6 @@ public class UserService {
         return (int) userRepository.count();
     }
 
-    /*
-    // register function
-    public String register(User user) {
-        String email = user.getEmail();
-        String nickname = user.getNickname();
-        boolean check1 = userRepository.existsByEmail(email);
-        boolean check2 = userRepository.existsByEmail(nickname);
-
-        if (check1 && check2) {
-            return "Both email and nickname are already registered.";
-        }
-        else if (check1) {
-            return "Email already registered.";
-        }
-        else if (check2) {
-            return "Nickname already registered.";
-        }
-        else {
-            userRepository.save(user);
-        }
-    }
-
-    // login function
-    public void login(String email, String password) {
-        boolean check = userRepository.existsByEmail(email);
-        if (check){
-            User user = userRepository.findByEmail(email).get();
-            if (user.getPassword().equals(password)) {
-                System.out.println("Successfully login!");
-            }
-            else {
-                System.out.println("Incorrect password!");
-            }
-        }
-        else {
-            System.out.println("Incorrect email!");
-        }
-    }
-    */
-
     // getting user function
     public User getUser(String nickname) {
         return userRepository.findByNickname(nickname).get();
@@ -108,7 +68,7 @@ public class UserService {
 
     // getting friends function (for /friends)
     public List<String> getFriends(String nickname) {
-        User user = userRepository.findByNickname(nickname).get();
+        User user = getUser(nickname);
         return user.getFriends();
     }
 
@@ -143,4 +103,50 @@ public class UserService {
         user.getGroups().add(groupName);
         userRepository.save(user);
     }
+
+    // getting groups function (for /groups)
+    public List<String> getGroups(String nickname) {
+        User user = getUser(nickname);
+        return user.getGroups();
+    }
 }
+
+/*
+    // register function
+    public String register(User user) {
+        String email = user.getEmail();
+        String nickname = user.getNickname();
+        boolean check1 = userRepository.existsByEmail(email);
+        boolean check2 = userRepository.existsByEmail(nickname);
+
+        if (check1 && check2) {
+            return "Both email and nickname are already registered.";
+        }
+        else if (check1) {
+            return "Email already registered.";
+        }
+        else if (check2) {
+            return "Nickname already registered.";
+        }
+        else {
+            userRepository.save(user);
+        }
+    }
+
+    // login function
+    public void login(String email, String password) {
+        boolean check = userRepository.existsByEmail(email);
+        if (check){
+            User user = userRepository.findByEmail(email).get();
+            if (user.getPassword().equals(password)) {
+                System.out.println("Successfully login!");
+            }
+            else {
+                System.out.println("Incorrect password!");
+            }
+        }
+        else {
+            System.out.println("Incorrect email!");
+        }
+    }
+    */

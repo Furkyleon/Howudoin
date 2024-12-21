@@ -23,7 +23,7 @@ public class FriendRequestController {
     // POST /friends/add: Send a friend request
     @PostMapping("/friends/add")
     public ResponseEntity<APIResponse<String>> sendRequest(@RequestHeader("Authorization") String token,
-                                           @RequestBody FriendRequest friendRequest) {
+                                                           @RequestBody FriendRequest friendRequest) {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
@@ -43,8 +43,8 @@ public class FriendRequestController {
 
     // GET /friends/requests: Retrieve pending friend requests
     @GetMapping("/friends/requests")
-    public ResponseEntity<APIResponse<List<FriendRequest>>> getFriendRequests( @RequestHeader("Authorization") String token,
-                                                                               @RequestParam("receiverNickname") String receiverNickname) {
+    public ResponseEntity<APIResponse<List<FriendRequest>>> getFriendRequests(@RequestHeader("Authorization") String token,
+                                                                              @RequestParam("receiverNickname") String receiverNickname) {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 

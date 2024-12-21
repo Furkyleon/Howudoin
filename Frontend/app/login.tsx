@@ -25,7 +25,7 @@ export default function Login() {
     }
 
     try {
-      const response = await fetch("http://192.168.96.1:8080/login", {
+      const response = await fetch("http://localhost:8080/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, nickname, password })
@@ -58,9 +58,8 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-      {/* Button to go to the main page stays the same */}
       <Pressable style={styles.noButton} onPress={goToFirstPage}>
-        <Text style={styles.mainPageText}>Main page</Text>
+        <Text style={styles.mainPageText}>Go Back</Text>
       </Pressable>
 
       <Text style={styles.title}>Login Page</Text>

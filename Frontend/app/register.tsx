@@ -28,7 +28,7 @@ export default function Register() {
     }
 
     try {
-      const response = await fetch("http://192.168.96.1:8080/register", {
+      const response = await fetch("http://localhost:8080/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -44,7 +44,6 @@ export default function Register() {
 
       if (result.status === 1) {
         Alert.alert("Success", result.data || "Registered successfully!");
-        // After successful registration, go to login page
         router.push("/login");
       } else {
         Alert.alert("Error", result.data || "Registration failed. Please try again.");
@@ -63,7 +62,7 @@ export default function Register() {
   return (
     <View style={styles.container}>
     <Pressable style={styles.noButton} onPress={goToFirstPage}>
-        <Text style={styles.mainPageText}>Main page</Text>
+        <Text style={styles.mainPageText}>Go back</Text>
     </Pressable>
 
       <Text style={styles.title}>Register Page</Text>

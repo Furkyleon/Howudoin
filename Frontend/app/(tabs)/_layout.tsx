@@ -24,7 +24,7 @@ export default function TabLayout() {
                 name="groups"
                 options={{
                     title: 'Groups',
-                    tabBarIcon: ({ color }) => <FontAwesome size={28} name="user" color={color} />,
+                    tabBarIcon: ({ color }) => <FontAwesome size={28} name="group" color={color} />,
                     headerShown: false
                 }}
             />
@@ -32,12 +32,14 @@ export default function TabLayout() {
                 name="addfriend"
                 options={{
                     href: null,
+                    headerShown: false
                 }}
             />
             <Tabs.Screen
                 name="friendrequests"
                 options={{
                     href: null,
+                    headerShown: false
                 }}
             />
         </Tabs>

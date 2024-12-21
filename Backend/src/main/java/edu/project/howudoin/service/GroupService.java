@@ -12,6 +12,8 @@ import java.util.List;
 @Service
 public class GroupService {
     @Autowired
+    private UserService userService;
+    @Autowired
     private GroupRepository groupRepository;
     @Autowired
     private MessageRepository messageRepository;
@@ -55,5 +57,9 @@ public class GroupService {
     public boolean memberCheck(int groupId, String memberName) {
         Group group = groupRepository.findById(groupId).get();
         return group.getMembers().contains(memberName);
+    }
+
+    public List<String> getGroups(String nickname) {
+        return userService.getGroups(nickname);
     }
 }

@@ -81,7 +81,7 @@ export default function FriendRequests() {
                 return;
             }
 
-            const response = await fetch(`http://192.168.96.1:8080/friends/accept?senderNickname=${sender}&receiverNickname=${nickname}`, {
+            const response = await fetch(`http://localhost:8080/friends/accept?senderNickname=${sender}&receiverNickname=${nickname}`, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -123,8 +123,16 @@ export default function FriendRequests() {
         );
     }
 
+    function goToFriends() {
+        router.push("/friends");
+    }
+
     return (
         <View style={styles.container}>
+            <Pressable style={styles.noButton} onPress={goToFriends}>
+                <Text style={styles.mainPageText}>Go Back</Text>
+            </Pressable>
+
             <Text style={styles.title}>Friend Requests</Text>
 
             {requests.length === 0 ? (
@@ -144,7 +152,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#25292e",
-        paddingTop: 50,
+        paddingTop: 30,
         paddingHorizontal: 20
     },
     loadingContainer: {
@@ -177,5 +185,15 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 16,
         marginBottom: 10
-    }
+    },
+    noButton: {
+        position: "absolute",
+        top: 40,
+        left: 20,
+    },
+    mainPageText: {
+        color: "white",
+        fontSize: 16,
+        textDecorationLine: "underline"
+    },
 });
