@@ -5,17 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3ea4858-f6b2-4977-9759-76d3a90595c3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/(tabs)/creategroup.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/addfriend.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/addfriend.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/friendrequests.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/friendrequests.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/(tabs)/friends.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/friends.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(tabs)/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/_layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(tabs)/groups.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/groups.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/(tabs)/mainpage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(tabs)/mainpage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/register.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/register.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +77,7 @@
       <workItem from="1734548133758" duration="4994000" />
       <workItem from="1734622571850" duration="7123000" />
       <workItem from="1734720588166" duration="4753000" />
-      <workItem from="1734795790666" duration="3584000" />
+      <workItem from="1734795790666" duration="6856000" />
     </task>
     <servers />
   </component>

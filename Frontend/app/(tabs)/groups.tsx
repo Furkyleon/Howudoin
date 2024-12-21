@@ -74,8 +74,13 @@ export default function Groups() {
         </View>
     );
 
-    function handleAddGroup() {
+    function handleCreateGroup() {
         router.push("./creategroup");
+    }
+
+    async function handleLogout() {
+        await AsyncStorage.clear();
+        router.push("/login");
     }
 
     if (loading) {
@@ -88,6 +93,12 @@ export default function Groups() {
 
     return (
         <View style={styles.container}>
+            <View style={styles.header}>
+                <Pressable style={styles.logoutButton} onPress={handleLogout}>
+                    <Text style={styles.logoutButtonText}>Logout</Text>
+                </Pressable>
+            </View>
+
             <Text style={styles.title}>Groups</Text>
 
             {groups.length === 0 ? (
@@ -101,7 +112,7 @@ export default function Groups() {
             )}
 
             <View style={styles.topLeftContainer}>
-                <Pressable style={styles.topButton} onPress={handleAddGroup}>
+                <Pressable style={styles.topButton} onPress={handleCreateGroup}>
                     <Text style={styles.topButtonText}>Create Group</Text>
                 </Pressable>
             </View>
@@ -115,6 +126,20 @@ const styles = StyleSheet.create({
         backgroundColor: "#25292e",
         paddingTop: 30,
         paddingHorizontal: 20
+    },
+    header: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        marginBottom: 10,
+    },
+    logoutButton: {
+        marginRight: 10
+    },
+    logoutButtonText: {
+        color: "white",
+        fontSize: 16,
+        textDecorationLine: "underline"
     },
     loadingContainer: {
         flex: 1,

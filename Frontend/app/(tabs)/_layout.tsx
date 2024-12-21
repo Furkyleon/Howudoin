@@ -42,6 +42,13 @@ export default function TabLayout() {
                     headerShown: false
                 }}
             />
+            <Tabs.Screen
+                name="creategroup"
+                options={{
+                    href: null,
+                    headerShown: false
+                }}
+            />
         </Tabs>
     );
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, Alert, Pressable } from "react-native";
+import { View, Text, StyleSheet, ActivityIndicator, Alert, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../../config';
@@ -18,87 +18,36 @@ interface APIResponse<T> {
 
 export default function MainPage() {
   const router = useRouter();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
 
   async function getToken(): Promise<string | null> {
     return AsyncStorage.getItem('token');
   }
 
-  useEffect(() => {
-    async function fetchMessages() {
-      try {
-        const token = await getToken();
-        if (!token) {
-          Alert.alert("Error", "No token found. Please login again.");
-          router.push("/login");
-          return;
-        }
-
-        const response = await fetch(`${API_URL}/messages`, {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result: APIResponse<Message[]> = await response.json();
-        if (result.status === 1 && Array.isArray(result.data)) {
-          setMessages(result.data);
-        }
-      } catch (error: any) {
-        console.error("Fetch Messages Error:", error);
-        Alert.alert("Error", "Failed to fetch messages.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchMessages();
-  }, [router]);
-
-  const renderMessage = ({ item }: { item: Message }) => (
-    <View style={styles.messageContainer}>
-      <Text style={styles.senderName}>{item.receiver}</Text>
-    </View>
-  );
-
   function handleNewMessageBox() {
     Alert.alert("New Chat", "Create new message box flow goes here.");
   }
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#9eb7ef" />
-      </View>
-    );
+  async function handleLogout() {
+    await AsyncStorage.clear();
+    router.push("/login");
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Chats</Text>
-      {messages.length === 0 ? (
-        <Text style={styles.noMessages}>No messages yet.</Text>
-      ) : (
-        <FlatList
-          data={messages}
-          keyExtractor={(item, index) => `${index}-${item.sender}`}
-          renderItem={renderMessage}
-        />
-      )}
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Pressable style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutButtonText}>Logout</Text>
+          </Pressable>
+        </View>
 
-      <View style={styles.topLeftContainer}>
-        <Pressable style={styles.topButton} onPress={handleNewMessageBox}>
-          <Text style={styles.topButtonText}>New Chat</Text>
-        </Pressable>
+        <Text style={styles.title}>Chats</Text>
+
+        <View style={styles.topLeftContainer}>
+          <Pressable style={styles.topButton} onPress={handleNewMessageBox}>
+            <Text style={styles.topButtonText}>New Chat</Text>
+          </Pressable>
+        </View>
       </View>
-    </View>
   );
 }
 
@@ -108,6 +57,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#25292e",
     paddingTop: 30,
     paddingHorizontal: 20
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  logoutButton: {
+    marginRight: 10,
+  },
+  logoutButtonText: {
+    color: "white",
+    fontSize: 16,
+    textDecorationLine: "underline",
   },
   loadingContainer: {
     flex: 1,
