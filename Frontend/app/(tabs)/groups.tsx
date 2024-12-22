@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { useRouter, useFocusEffect } from "expo-router";
 import {
   View,
   Text,
@@ -9,7 +10,6 @@ import {
   Pressable,
   Modal,
 } from "react-native";
-import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../../config";
 
@@ -39,30 +39,29 @@ export default function Groups() {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [selectedGroup, setSelectedGroup] = useState<GroupDetails | null>(null);
 
-  async function getToken(): Promise<string | null> {
+  const getToken = async (): Promise<string | null> => {
     return AsyncStorage.getItem("token");
-  }
+  };
 
-  useEffect(() => {
-    async function fetchGroups() {
-      try {
-        const token = await getToken();
-        if (!token) {
-          Alert.alert("Error", "No token found. Please login again.");
-          router.push("/login");
-          return;
-        }
+  const fetchGroups = async () => {
+    try {
+      const token = await getToken();
+      if (!token) {
+        Alert.alert("Error", "No token found. Please login again.");
+        router.push("/login");
+        return;
+      }
 
-        const storedNickname = await AsyncStorage.getItem("nickname");
-        if (!storedNickname) {
-          Alert.alert("Error", "No nickname found. Please login again.");
-          router.push("/login");
-          return;
-        }
+      const storedNickname = await AsyncStorage.getItem("nickname");
+      if (!storedNickname) {
+        Alert.alert("Error", "No nickname found. Please login again.");
+        router.push("/login");
+        return;
+      }
 
-        setNickname(storedNickname);
+      setNickname(storedNickname);
 
-        const response = await fetch(
+      const response = await fetch(
           `${API_URL}/groups?nickname=${storedNickname}`,
           {
             method: "GET",
@@ -71,34 +70,45 @@ export default function Groups() {
               "Content-Type": "application/json",
             },
           }
-        );
+      );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-        const result: APIResponse<Group[]> = await response.json();
+      const result: APIResponse<Group[]> = await response.json();
 
-        if (result.status === 1 && Array.isArray(result.data)) {
-          setGroups(result.data);
-        } else {
-          Alert.alert(
+      if (result.status === 1 && Array.isArray(result.data)) {
+        setGroups(result.data);
+      } else {
+        Alert.alert(
             "Error",
             result.message || "Failed to fetch groups list."
-          );
-        }
-      } catch (error: any) {
-        console.error("Fetch Groups Error:", error);
-        Alert.alert("Error", "Failed to fetch groups.");
-      } finally {
-        setLoading(false);
+        );
       }
+    } catch (error: any) {
+      console.error("Fetch Groups Error:", error);
+      Alert.alert("Error", "Failed to fetch groups.");
+    } finally {
+      setLoading(false);
     }
+  };
 
+  useEffect(() => {
+    // Fetch groups when the component mounts
+    setLoading(true);
     fetchGroups();
-  }, [router]);
+  }, []);
 
-  async function fetchGroupDetails(groupId: number) {
+  useFocusEffect(
+      useCallback(() => {
+        // Refetch groups when the screen regains focus
+        setLoading(true);
+        fetchGroups();
+      }, [])
+  );
+
+  const fetchGroupDetails = async (groupId: number) => {
     try {
       const token = await getToken();
       if (!token) {
@@ -124,98 +134,100 @@ export default function Groups() {
         setModalVisible(true);
       } else {
         Alert.alert(
-          "Error",
-          result.message || "Failed to fetch group details."
+            "Error",
+            result.message || "Failed to fetch group details."
         );
       }
     } catch (error: any) {
       console.error("Fetch Group Details Error:", error);
       Alert.alert("Error", "Failed to fetch group details.");
     }
-  }
+  };
 
   const renderGroup = ({ item }: { item: Group }) => (
-    <View style={styles.groupContainer}>
-      <Text style={styles.groupName}>{item.name}</Text>
-      <Pressable
-        style={styles.infoButton}
-        onPress={() => fetchGroupDetails(item.id)}
-      >
-        <Text style={styles.infoButtonText}>Info</Text>
-      </Pressable>
-    </View>
+      <View style={styles.groupContainer}>
+        <Text style={styles.groupName}>{item.name}</Text>
+        <Pressable
+            style={styles.infoButton}
+            onPress={() => fetchGroupDetails(item.id)}
+        >
+          <Text style={styles.infoButtonText}>Info</Text>
+        </Pressable>
+      </View>
   );
 
-  function handleCreateGroup() {
+  const handleCreateGroup = () => {
     router.push("./creategroup");
-  }
+  };
 
-  async function handleLogout() {
+  const handleLogout = async () => {
     await AsyncStorage.clear();
     router.push("/login");
-  }
+  };
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#9eb7ef" />
-      </View>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#9eb7ef" />
+        </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Pressable style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutButtonText}>Logout</Text>
-        </Pressable>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Pressable style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutButtonText}>Logout</Text>
+          </Pressable>
+        </View>
+
+        <Text style={styles.title}>Groups</Text>
+
+        {groups.length === 0 ? (
+            <Text style={styles.noGroups}>No groups found.</Text>
+        ) : (
+            <FlatList
+                data={groups}
+                keyExtractor={(item, index) => `${item.id}-${index}`} // Ensures unique keys
+                renderItem={renderGroup}
+            />
+
+        )}
+
+        <View style={styles.topLeftContainer}>
+          <Pressable style={styles.topButton} onPress={handleCreateGroup}>
+            <Text style={styles.topButtonText}>Create Group</Text>
+          </Pressable>
+        </View>
+
+        {selectedGroup && (
+            <Modal visible={modalVisible} transparent={true} animationType="slide">
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <Text style={styles.modalTitle}>{selectedGroup.name}</Text>
+                  <Text style={styles.modalText}>
+                    Created Time: {selectedGroup.createdTime}
+                  </Text>
+                  <Text style={styles.modalText}>Members:</Text>
+                  {selectedGroup.members.map((member, index) => (
+                      <Text key={index} style={styles.modalText}>
+                        {member}
+                      </Text>
+                  ))}
+                  <Pressable
+                      style={styles.closeButton}
+                      onPress={() => setModalVisible(false)}
+                  >
+                    <Text style={styles.closeButtonText}>Close</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
+        )}
       </View>
-
-      <Text style={styles.title}>Groups</Text>
-
-      {groups.length === 0 ? (
-        <Text style={styles.noGroups}>No groups found.</Text>
-      ) : (
-        <FlatList
-          data={groups}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={renderGroup}
-        />
-      )}
-
-      <View style={styles.topLeftContainer}>
-        <Pressable style={styles.topButton} onPress={handleCreateGroup}>
-          <Text style={styles.topButtonText}>Create Group</Text>
-        </Pressable>
-      </View>
-
-      {selectedGroup && (
-        <Modal visible={modalVisible} transparent={true} animationType="slide">
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>{selectedGroup.name}</Text>
-              <Text style={styles.modalText}>
-                Created Time: {selectedGroup.createdTime}
-              </Text>
-              <Text style={styles.modalText}>Members:</Text>
-              {selectedGroup.members.map((member, index) => (
-                <Text key={index} style={styles.modalText}>
-                  {member}
-                </Text>
-              ))}
-              <Pressable
-                style={styles.closeButton}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.closeButtonText}>Close</Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
-      )}
-    </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
