@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, Alert, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+  Pressable,
+} from "react-native";
 import { useRouter } from "expo-router";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from '../../config';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL } from "../../config";
 
 interface Message {
   sender: string;
@@ -20,7 +27,7 @@ export default function MainPage() {
   const router = useRouter();
 
   async function getToken(): Promise<string | null> {
-    return AsyncStorage.getItem('token');
+    return AsyncStorage.getItem("token");
   }
 
   function handleNewMessageBox() {
@@ -33,21 +40,21 @@ export default function MainPage() {
   }
 
   return (
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Pressable style={styles.logoutButton} onPress={handleLogout}>
-            <Text style={styles.logoutButtonText}>Logout</Text>
-          </Pressable>
-        </View>
-
-        <Text style={styles.title}>Chats</Text>
-
-        <View style={styles.topLeftContainer}>
-          <Pressable style={styles.topButton} onPress={handleNewMessageBox}>
-            <Text style={styles.topButtonText}>New Chat</Text>
-          </Pressable>
-        </View>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Pressable style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>Logout</Text>
+        </Pressable>
       </View>
+
+      <Text style={styles.title}>Chats</Text>
+
+      <View style={styles.topLeftContainer}>
+        <Pressable style={styles.topButton} onPress={handleNewMessageBox}>
+          <Text style={styles.topButtonText}>New Chat</Text>
+        </Pressable>
+      </View>
+    </View>
   );
 }
 
@@ -56,7 +63,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#25292e",
     paddingTop: 30,
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   header: {
     flexDirection: "row",
@@ -76,7 +83,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#25292e",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   topLeftContainer: {
     justifyContent: "center",
@@ -84,12 +91,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   topButton: {
-    marginRight: 10
+    marginRight: 10,
   },
   topButtonText: {
     color: "white",
     fontSize: 20,
-    textDecorationLine: "underline"
+    textDecorationLine: "underline",
   },
   title: {
     color: "#9eb7ef",
@@ -97,28 +104,28 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontWeight: "bold",
     alignSelf: "center",
-    marginTop: 40
+    marginTop: 40,
   },
   noMessages: {
     color: "white",
     alignSelf: "center",
     marginTop: 30,
-    fontSize: 18
+    fontSize: 18,
   },
   messageContainer: {
     backgroundColor: "#333",
     padding: 15,
     borderRadius: 10,
-    marginBottom: 15
+    marginBottom: 15,
   },
   senderName: {
     color: "#9eb7ef",
     fontWeight: "bold",
     marginBottom: 5,
-    fontSize: 16
+    fontSize: 16,
   },
   messageText: {
     color: "white",
-    fontSize: 14
-  }
+    fontSize: 14,
+  },
 });

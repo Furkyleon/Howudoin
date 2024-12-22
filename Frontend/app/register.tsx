@@ -1,7 +1,14 @@
 import { useState } from "react";
-import { Text, View, StyleSheet, TextInput, Pressable, Alert } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  Pressable,
+  Alert,
+} from "react-native";
 import { router } from "expo-router";
-import { API_URL } from '../config';
+import { API_URL } from "../config";
 
 interface APIResponse<T> {
   status: number;
@@ -32,9 +39,9 @@ export default function Register() {
       const response = await fetch(`${API_URL}/register`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, lastname, nickname, email, password })
+        body: JSON.stringify({ name, lastname, nickname, email, password }),
       });
 
       if (!response.ok) {
@@ -47,9 +54,11 @@ export default function Register() {
         Alert.alert("Success", result.data || "Registered successfully!");
         router.push("/login");
       } else {
-        Alert.alert("Error", result.data || "Registration failed. Please try again.");
+        Alert.alert(
+          "Error",
+          result.data || "Registration failed. Please try again."
+        );
       }
-
     } catch (error: any) {
       console.error("Fetch Error:", error.message);
       Alert.alert("Error", "Registration failed. Please try again.");
@@ -62,9 +71,9 @@ export default function Register() {
 
   return (
     <View style={styles.container}>
-    <Pressable style={styles.noButton} onPress={goToFirstPage}>
+      <Pressable style={styles.noButton} onPress={goToFirstPage}>
         <Text style={styles.mainPageText}>Go back</Text>
-    </Pressable>
+      </Pressable>
 
       <Text style={styles.title}>Register Page</Text>
 
@@ -132,7 +141,7 @@ const styles = StyleSheet.create({
   text: {
     marginTop: 5,
     fontSize: 15,
-    color: "white"
+    color: "white",
   },
   input: {
     marginTop: 10,
@@ -166,6 +175,6 @@ const styles = StyleSheet.create({
   mainPageText: {
     color: "white",
     fontSize: 16,
-    textDecorationLine: "underline" 
+    textDecorationLine: "underline",
   },
 });

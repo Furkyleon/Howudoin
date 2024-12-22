@@ -1,8 +1,15 @@
 import { useState } from "react";
-import { Text, View, StyleSheet, TextInput, Pressable, Alert } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  Pressable,
+  Alert,
+} from "react-native";
 import { router } from "expo-router";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from '../config';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL } from "../config";
 
 interface APIResponse<T> {
   status: number;
@@ -16,7 +23,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
 
   async function storeToken(token: string) {
-    await AsyncStorage.setItem('token', token);
+    await AsyncStorage.setItem("token", token);
   }
 
   async function login() {
@@ -29,7 +36,7 @@ export default function Login() {
       const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, nickname, password })
+        body: JSON.stringify({ email, nickname, password }),
       });
 
       if (!response.ok) {
@@ -39,14 +46,13 @@ export default function Login() {
       const result: APIResponse<string> = await response.json();
 
       if (result.status === 1) {
-        const token = result.data; 
+        const token = result.data;
         await storeToken(token);
         await AsyncStorage.setItem("nickname", nickname);
         router.push("/mainpage");
       } else {
         Alert.alert("Error:", result.data || "Login failed. Please try again.");
       }
-
     } catch (error: any) {
       console.error("Fetch Error:", error.message);
       Alert.alert("Error", "Login failed. Please try again.");
@@ -66,26 +72,26 @@ export default function Login() {
       <Text style={styles.title}>Login Page</Text>
 
       <Text style={styles.text}>Nickname:</Text>
-      <TextInput 
-        style={styles.input} 
-        onChangeText={setNickname} 
+      <TextInput
+        style={styles.input}
+        onChangeText={setNickname}
         placeholder={"Enter a nickname..."}
         value={nickname}
       />
 
-    <Text style={styles.text}>Email:</Text>
-      <TextInput 
-        style={styles.input} 
-        onChangeText={setEmail} 
+      <Text style={styles.text}>Email:</Text>
+      <TextInput
+        style={styles.input}
+        onChangeText={setEmail}
         placeholder={"Enter an email..."}
         value={email}
       />
 
       <Text style={styles.text}>Password:</Text>
-      <TextInput 
-        style={styles.input} 
-        onChangeText={setPassword} 
-        placeholder={"Enter a password..."} 
+      <TextInput
+        style={styles.input}
+        onChangeText={setPassword}
+        placeholder={"Enter a password..."}
         secureTextEntry={true}
         value={password}
       />
@@ -114,7 +120,7 @@ const styles = StyleSheet.create({
   mainPageText: {
     color: "white",
     fontSize: 16,
-    textDecorationLine: "underline" 
+    textDecorationLine: "underline",
   },
   title: {
     color: "#9eb7ef",
@@ -125,7 +131,7 @@ const styles = StyleSheet.create({
   text: {
     marginTop: 5,
     fontSize: 15,
-    color:"white"
+    color: "white",
   },
   input: {
     marginTop: 10,
@@ -140,7 +146,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 20,
-    backgroundColor:"#9eb7ef",
+    backgroundColor: "#9eb7ef",
     alignItems: "center",
     justifyContent: "center",
     width: 140,
@@ -150,5 +156,5 @@ const styles = StyleSheet.create({
   buttontext: {
     color: "white",
     fontSize: 16,
-  }
+  },
 });

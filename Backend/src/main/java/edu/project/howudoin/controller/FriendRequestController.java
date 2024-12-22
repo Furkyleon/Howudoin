@@ -20,6 +20,45 @@ public class FriendRequestController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    // GET /friends: Retrieve friend list
+    @GetMapping("/friends")
+    public ResponseEntity<APIResponse<List<String>>> getFriends(@RequestHeader("Authorization") String token,
+                                                                @RequestParam("nickname") String nickname) {
+        String jwt = extractJwt(token);
+        String email = jwtUtil.extractEmail(jwt);
+
+        if (!jwtUtil.validateToken(jwt, email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new APIResponse<>(0, "Invalid token!", null));
+        }
+
+        List<String> friends = friendRequestService.getFriends(nickname);
+        return ResponseEntity.ok(new APIResponse<>(1, "Friends are retrieved successfully!", friends));
+    }
+
+    // GET /friends/requests: Retrieve pending friend requests
+    @GetMapping("/friends/requests")
+    public ResponseEntity<APIResponse<List<FriendRequest>>> getFriendRequests(@RequestHeader("Authorization") String token,
+                                                                              @RequestParam("receiverNickname") String receiverNickname) {
+        String jwt = extractJwt(token);
+        String email = jwtUtil.extractEmail(jwt);
+
+        if (!jwtUtil.validateToken(jwt, email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new APIResponse<>(0, "Invalid Token", null));
+        }
+
+        List<FriendRequest> friendRequests = friendRequestService.getPendingRequests(receiverNickname)
+                .stream()
+                .filter(request -> !request.isAccepted())
+                .toList();;
+
+        if (friendRequests.isEmpty()) {
+            return ResponseEntity.ok(new APIResponse<>(1, "No pending friend requests.", friendRequests));
+        }
+
+        return ResponseEntity.ok(new APIResponse<>(1, "Friend requests retrieved successfully.", friendRequests));
+    }
+
     // POST /friends/add: Send a friend request
     @PostMapping("/friends/add")
     public ResponseEntity<APIResponse<String>> sendRequest(@RequestHeader("Authorization") String token,
@@ -41,30 +80,6 @@ public class FriendRequestController {
         return ResponseEntity.ok(new APIResponse<>(1, resultMessage, null));
     }
 
-    // GET /friends/requests: Retrieve pending friend requests
-    @GetMapping("/friends/requests")
-    public ResponseEntity<APIResponse<List<FriendRequest>>> getFriendRequests(@RequestHeader("Authorization") String token,
-                                                                              @RequestParam("receiverNickname") String receiverNickname) {
-        String jwt = extractJwt(token);
-        String email = jwtUtil.extractEmail(jwt);
-
-        if (!jwtUtil.validateToken(jwt, email)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new APIResponse<>(0, "Invalid Token", null));
-        }
-
-        List<FriendRequest> friendRequests = friendRequestService.getPendingRequests(receiverNickname)
-                .stream()
-                .filter(request -> !request.isAccepted()) // Exclude accepted requests
-                .toList();;
-
-        if (friendRequests.isEmpty()) {
-            return ResponseEntity.ok(new APIResponse<>(1, "No pending friend requests.", friendRequests));
-        }
-
-        return ResponseEntity.ok(new APIResponse<>(1, "Friend requests retrieved successfully.", friendRequests));
-    }
-
     // POST /friends/accept: Accept a friend request
     @PostMapping("/friends/accept")
     public ResponseEntity<APIResponse<String>> acceptRequest(@RequestHeader("Authorization") String token,
@@ -77,11 +92,11 @@ public class FriendRequestController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new APIResponse<>(0, "Invalid Token", null));}
 
-        if (!friendRequestService.checkExist(senderNickname, receiverNickname)) {
+        if (!friendRequestService.checkRequest(senderNickname, receiverNickname)) {
             return ResponseEntity.ok(new APIResponse<>(0, "There is no such request.", null));
         }
 
-        boolean pending = friendRequestService.checkRequest(senderNickname, receiverNickname);
+        boolean pending = friendRequestService.checkAcceptance(senderNickname, receiverNickname);
         if (!pending) {
             return ResponseEntity.ok(new APIResponse<>(0, "You are already friends with " + receiverNickname + ".", null));
         }
@@ -90,26 +105,11 @@ public class FriendRequestController {
         return ResponseEntity.ok(new APIResponse<>(1, result, null));
     }
 
-
-    // GET /friends: Retrieve friend list
-    @GetMapping("/friends")
-    public ResponseEntity<APIResponse<List<String>>> getFriends(@RequestHeader("Authorization") String token,
-                                                                @RequestParam("nickname") String nickname) {
-        String jwt = extractJwt(token);
-        String email = jwtUtil.extractEmail(jwt);
-
-        if (!jwtUtil.validateToken(jwt, email)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new APIResponse<>(0, "Invalid token!", null));
-        }
-
-        List<String> friends = friendRequestService.getFriends(nickname);
-        return ResponseEntity.ok(new APIResponse<>(1, "Friends are retrieved successfully!", friends));
-    }
-
     private String extractJwt(String token) {
         if (token == null || !token.startsWith("Bearer ")) {
             throw new RuntimeException("Authorization header must start with 'Bearer '");
         }
         return token.substring(7);
     }
+
 }

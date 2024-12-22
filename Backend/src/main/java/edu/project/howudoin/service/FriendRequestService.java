@@ -20,7 +20,33 @@ public class FriendRequestService {
         return (int) friendRequestRepository.count();
     }
 
-    // sending request function
+    // checking if friend request exists or not
+    public boolean checkRequest(String senderNickname, String receiverNickname) {
+        return friendRequestRepository.existsBySenderAndReceiver(senderNickname, receiverNickname);
+    }
+
+    // checking if friend request is accepted or not
+    public boolean checkAcceptance(String senderNickname, String receiverNickname) {
+        FriendRequest request = friendRequestRepository.findBySenderAndReceiver(senderNickname, receiverNickname).get();
+        if (request.isAccepted()) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    // getting friends
+    public List<String> getFriends(String nickname) {
+        return userService.getFriends(nickname);
+    }
+
+    // getting friend requests
+    public List<FriendRequest> getPendingRequests(String receiverNickname) {
+        return friendRequestRepository.findByReceiver(receiverNickname).get();
+    }
+
+    // sending request
     public String sendRequest(FriendRequest request){
         String sender = request.getSender();
         String receiver = request.getReceiver();
@@ -47,7 +73,7 @@ public class FriendRequestService {
         }
     }
 
-    // accepting request function
+    // accepting request
     public String acceptRequest(String senderNickname, String receiverNickname){
         FriendRequest request;
         request = friendRequestRepository.findBySenderAndReceiver(senderNickname, receiverNickname).get();
@@ -60,26 +86,4 @@ public class FriendRequestService {
         return "Request has been accepted.";
     }
 
-    // getting friends function
-    public List<String> getFriends(String nickname) {
-        return userService.getFriends(nickname);
-    }
-
-    public boolean checkExist(String senderNickname, String receiverNickname) {
-        return friendRequestRepository.existsBySenderAndReceiver(senderNickname, receiverNickname);
-    }
-
-    public boolean checkRequest(String senderNickname, String receiverNickname) {
-        FriendRequest request = friendRequestRepository.findBySenderAndReceiver(senderNickname, receiverNickname).get();
-        if (request.isAccepted()) {
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
-
-    public List<FriendRequest> getPendingRequests(String receiverNickname) {
-       return friendRequestRepository.findByReceiver(receiverNickname).get();
-    }
 }

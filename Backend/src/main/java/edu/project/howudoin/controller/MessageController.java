@@ -25,6 +25,51 @@ public class MessageController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    // GET /messages: Retrieve conversation history
+    @GetMapping("/messages")
+    public ResponseEntity<APIResponse<List<Message>>> getMessages(@RequestHeader("Authorization") String token) {
+        String jwt = extractJwt(token);
+        String email = jwtUtil.extractEmail(jwt);
+
+        if (!jwtUtil.validateToken(jwt, email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new APIResponse<>(0, "Invalid Token", null));
+        }
+
+        User user = userService.getUserByEmail(email);
+        List<Message> messages = messageService.getMessages(user);
+
+        if (messages.isEmpty()) {
+            return ResponseEntity.ok(new APIResponse<>(0, "No messages.", messages));
+        }
+
+        return ResponseEntity.ok(new APIResponse<>(1, "Messages are retrieved successfully!", messages));
+    }
+
+    // GET /messages: Retrieve conversation history between two user
+    @GetMapping("/messagesbetween")
+    public ResponseEntity<APIResponse<List<Message>>> getMessagesBetweenTwoUsers(@RequestHeader("Authorization") String token,
+                                                                                 @RequestParam("nickname") String nickname,
+                                                                                 @RequestParam("friend") String friend) {
+        String jwt = extractJwt(token);
+        String email = jwtUtil.extractEmail(jwt);
+
+        if (!jwtUtil.validateToken(jwt, email)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new APIResponse<>(0, "Invalid Token", null));
+        }
+
+        User user = userService.getUser(nickname);
+        User friendUser = userService.getUser(friend);
+        List<Message> messages = messageService.getMessagesBetween(user, friendUser);
+
+        if (messages.isEmpty()) {
+            return ResponseEntity.ok(new APIResponse<>(0, "No messages.", messages));
+        }
+
+        return ResponseEntity.ok(new APIResponse<>(1, "Messages are retrieved successfully!", messages));
+    }
+
     // POST /messages/send: Send a message to a friend
     @PostMapping("/messages/send")
     public ResponseEntity<APIResponse<String>> sendMessage(@RequestHeader("Authorization") String token,
@@ -40,32 +85,12 @@ public class MessageController {
         int id = messageService.generateMessageId();
         message.setId(id);
         String result = messageService.sendMessage(message);
+
         return ResponseEntity.ok(new APIResponse<>(1, result, null));
-    }
-
-    // GET /messages: Retrieve conversation history
-    @GetMapping("/messages")
-    public ResponseEntity<APIResponse<List<Message>>> getMessages(@RequestHeader("Authorization") String token) {
-        String jwt = extractJwt(token);
-        String email = jwtUtil.extractEmail(jwt);
-
-        if (!jwtUtil.validateToken(jwt, email)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new APIResponse<>(0, "Invalid Token", null));
-        }
-
-        User user = userService.getUserByEmail(email);
-        List<Message> messages = messageService.getMessages(user);
-        if (messages.isEmpty()) {
-            return ResponseEntity.ok(new APIResponse<>(0, "No messages.", messages));
-        }
-        return ResponseEntity.ok(new APIResponse<>(1, "Messages are retrieved successfully!", messages));
     }
 
     private String extractJwt(String token) {
         if (token == null || !token.startsWith("Bearer ")) {
-            // Here you can return a ResponseEntity if desired, or
-            // handle this via a global exception handler.
             throw new RuntimeException("Authorization header must start with 'Bearer '");
         }
         return token.substring(7);

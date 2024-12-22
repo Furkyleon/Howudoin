@@ -1,22 +1,25 @@
-import { Image, Text, View, StyleSheet, Pressable} from "react-native";
+import { Image, Text, View, StyleSheet, Pressable } from "react-native";
 import { router } from "expo-router";
 
-function NavigateToRegister(){
+function NavigateToRegister() {
   router.push("/register");
 }
 
-function NavigateToLogin(){
+function NavigateToLogin() {
   router.push("/login");
 }
 
 export default function Index() {
   return (
     <View style={styles.container}>
-      <Image style={styles.image} source={require("../assets/images/howudoin.jpg")} />
+      <Image
+        style={styles.image}
+        source={require("../assets/images/howudoin.jpg")}
+      />
       <Text style={styles.text}>Welcome to Howudoin!</Text>
-        <Pressable style={styles.button1} onPress={NavigateToRegister}>
-          <Text style={styles.buttontext}> Register </Text>
-        </Pressable>
+      <Pressable style={styles.button1} onPress={NavigateToRegister}>
+        <Text style={styles.buttontext}> Register </Text>
+      </Pressable>
       <Pressable style={styles.button2} onPress={NavigateToLogin}>
         <Text style={styles.buttontext}> Login </Text>
       </Pressable>

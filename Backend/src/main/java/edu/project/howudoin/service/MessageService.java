@@ -5,6 +5,8 @@ import edu.project.howudoin.model.User;
 import edu.project.howudoin.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,7 +21,24 @@ public class MessageService {
         return (int) messageRepository.count();
     }
 
-    // sending message function
+    // getting messages of an user
+    public List<Message> getMessages(User user) {
+        return user.getMessages();
+    }
+
+    // getting messages between two users
+    public List<Message> getMessagesBetween(User user1, User user2) {
+        List<Message> messages = getMessages(user1);
+        List<Message> filteredMessages = new ArrayList<>();
+        for (Message message : messages) {
+            if (message.getReceiver().equals(user2.getNickname()) && message.getReceiver().equals(user1.getNickname())) {
+                filteredMessages.add(message);
+            }
+        }
+        return filteredMessages;
+    }
+
+    // sending message
     public String sendMessage(Message message) {
         String sender = message.getSender();
         String receiver = message.getReceiver();
@@ -42,12 +61,5 @@ public class MessageService {
                 return "Message could not be sent. You are not friend with this receiver.";
             }
         }
-    }
-
-    // getting messages function
-    public List<Message> getMessages(User user) {
-        String nickname = user.getNickname();
-        user = userService.getUser(nickname);
-        return user.getMessages();
     }
 }
