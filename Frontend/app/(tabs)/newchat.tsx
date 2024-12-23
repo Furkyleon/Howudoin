@@ -14,24 +14,23 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../../config";
 
 interface Message {
-    _id: number;
+    id: number;
     sender: string;
     receiver: string;
     content: string;
 }
 
-export default function MessagePage() {
+export default function NewMessagePage() {
     const { friend } = useLocalSearchParams();
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState<string>("");
     const [nickname, setNickname] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
-    // Fetch Messages
     const fetchMessages = async () => {
         try {
-            setMessages([]); // Clear existing messages immediately
-            setLoading(true); // Start loading spinner
+            setMessages([]);
+            setLoading(true);
 
             const token = await AsyncStorage.getItem("token");
             const storedNickname = await AsyncStorage.getItem("nickname");
@@ -70,7 +69,6 @@ export default function MessagePage() {
         }
     };
 
-    // Handle Send Message
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
 
@@ -111,15 +109,13 @@ export default function MessagePage() {
         }
     };
 
-    // Trigger fetching messages whenever `friend` changes
     useEffect(() => {
         fetchMessages();
         return () => {
-            setMessages([]); // Clear messages when component unmounts or `friend` changes
+            setMessages([]);
         };
-    }, [friend]); // Dependency ensures new messages are fetched for each friend
+    }, [friend]);
 
-    // Show loading spinner while fetching messages
     if (loading) {
         return (
             <View style={styles.loadingContainer}>

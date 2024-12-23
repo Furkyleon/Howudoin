@@ -21,17 +21,17 @@ public class MessageService {
         return (int) messageRepository.count();
     }
 
-    // getting messages of an user
+    // getting messages of a user
     public List<Message> getMessages(User user) {
         return user.getMessages();
     }
 
+    // getting messages between two users
     public List<Message> getMessagesBetween(User user1, User user2) {
-        List<Message> messages = getMessages(user1); // Get all messages for user1
+        List<Message> messages = getMessages(user1);
         List<Message> filteredMessages = new ArrayList<>();
 
         for (Message message : messages) {
-            // Check if the message is between user1 and user2 (in either direction)
             if ((message.getSender().equals(user1.getNickname()) && message.getReceiver().equals(user2.getNickname())) ||
                     (message.getSender().equals(user2.getNickname()) && message.getReceiver().equals(user1.getNickname()))) {
                 filteredMessages.add(message);
@@ -39,7 +39,6 @@ public class MessageService {
         }
         return filteredMessages;
     }
-
 
     // sending message
     public String sendMessage(Message message) {

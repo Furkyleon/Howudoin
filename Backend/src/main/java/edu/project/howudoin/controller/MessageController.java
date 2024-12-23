@@ -47,10 +47,9 @@ public class MessageController {
     }
 
     @GetMapping("/messagesbetween")
-    public ResponseEntity<APIResponse<List<Message>>> getMessagesBetweenTwoUsers(
-            @RequestHeader("Authorization") String token,
-            @RequestParam("nickname") String nickname,
-            @RequestParam("friend") String friend) {
+    public ResponseEntity<APIResponse<List<Message>>> getMessagesBetweenTwoUsers(@RequestHeader("Authorization") String token,
+                                                                                 @RequestParam("nickname") String nickname,
+                                                                                 @RequestParam("friend") String friend) {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
@@ -60,15 +59,8 @@ public class MessageController {
         }
 
         try {
-            // Log the incoming request details
-            System.out.println("Fetching messages between: " + nickname + " and " + friend);
-
             User user = userService.getUser(nickname);
             User friendUser = userService.getUser(friend);
-
-            // Log user details
-            System.out.println("User: " + (user != null ? user.getNickname() : "null"));
-            System.out.println("Friend: " + (friendUser != null ? friendUser.getNickname() : "null"));
 
             if (user == null || friendUser == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -76,9 +68,6 @@ public class MessageController {
             }
 
             List<Message> messages = messageService.getMessagesBetween(user, friendUser);
-
-            // Log retrieved messages
-            System.out.println("Messages retrieved: " + (messages != null ? messages.size() : 0));
 
             if (messages == null || messages.isEmpty()) {
                 return ResponseEntity.ok(new APIResponse<>(0, "No messages.", messages));
@@ -92,16 +81,10 @@ public class MessageController {
         }
     }
 
-
-
-
     // POST /messages/send: Send a message to a friend
     @PostMapping("/messages/send")
     public ResponseEntity<APIResponse<String>> sendMessage(@RequestHeader("Authorization") String token,
                                                            @RequestBody Message message) {
-        System.out.println("Sending message: " + message);
-        System.out.println("User: " + message.getSender());
-        System.out.println("Reciever: " + message.getReceiver());
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 

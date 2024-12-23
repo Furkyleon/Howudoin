@@ -14,20 +14,19 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../../config";
 
 interface Message {
-    _id: number;
+    id: number;
     sender: string;
     receiver: string;
     content: string;
 }
 
-export default function MessagePage() {
+export default function FriendMessages() {
     const { friend } = useLocalSearchParams();
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState<string>("");
     const [nickname, setNickname] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
-    // Fetch Messages
     const fetchMessages = async () => {
         try {
             const token = await AsyncStorage.getItem("token");
@@ -65,7 +64,6 @@ export default function MessagePage() {
         }
     };
 
-    // Handle Send Message
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
 
@@ -107,23 +105,19 @@ export default function MessagePage() {
     };
 
     useEffect(() => {
-        // Fetch messages immediately when the component mounts or the `friend` changes
         fetchMessages();
 
-        // Set up an interval to fetch messages every 5 seconds
         const interval = setInterval(() => {
             fetchMessages();
         }, 5000);
 
-        // Cleanup function to clear the interval and messages array
-        return () => {// neden dönüyor mesaj fetch lerken
-            clearInterval(interval); // Clear the interval when leaving the page or when `friend` changes
-            setMessages([]); // Clear the messages array when leaving the page
+        return () => {
+            clearInterval(interval);
+            setMessages([]);
         };
-    }, [friend]); // Dependency ensures the effect runs when the `friend` changes
+    }, [friend]);
 
 
-    // Show loading spinner while fetching messages
 
     return (
         <View style={styles.container}>
@@ -132,12 +126,12 @@ export default function MessagePage() {
                 {messages.length > 0 ? (
                     messages.map((message, index) => (
                         <View
-                            key={`${message._id || index}`} // Use _id if unique, fallback to index
+                            key={`${message.id || index}`}
                             style={[
                                 styles.messageBubble,
                                 message.sender === nickname
-                                    ? styles.messageRight // Sender's message
-                                    : styles.messageLeft, // Receiver's message
+                                    ? styles.messageRight
+                                    : styles.messageLeft,
                             ]}
                         >
                             <Text style={styles.messageText}>{message.content}</Text>
