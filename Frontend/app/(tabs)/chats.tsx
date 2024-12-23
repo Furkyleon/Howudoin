@@ -6,10 +6,13 @@ import {
     StyleSheet,
     Pressable,
     Alert,
+    ImageBackground,
+    ActivityIndicator,
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../../config";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 interface Message {
     sender: string;
@@ -58,19 +61,18 @@ export default function MainPage() {
             const result = await response.json();
 
             if (result.status === 1 && Array.isArray(result.data)) {
-                const uniquePartners = Array.from(
+                const uniquePartners: string[] = Array.from(
                     new Set(
                         result.data
                             .filter(
                                 (msg: Message) =>
-                                    msg.sender === storedNickname ||
-                                    msg.receiver === storedNickname
+                                    msg.sender === storedNickname || msg.receiver === storedNickname
                             )
                             .map((msg: Message) =>
                                 msg.sender === storedNickname ? msg.receiver : msg.sender
                             )
                     )
-                );
+                ) as string[];
                 setChatPartners(uniquePartners);
             } else {
                 setChatPartners([]);
@@ -136,108 +138,149 @@ export default function MainPage() {
     );
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Pressable style={styles.logoutButton} onPress={handleLogout}>
-                    <Text style={styles.logoutButtonText}>Logout</Text>
-                </Pressable>
-            </View>
+        <ImageBackground
+            source={require("../../assets/images/friendsbg3.jpg")}
+            style={styles.background}
+        >
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.title}>{"  "} Chats</Text>
+                    <Pressable style={styles.logoutButton} onPress={handleLogout}>
+                        <FontAwesome size={28} name="sign-out" color={"black"} />
+                    </Pressable>
+                </View>
 
-            <Text style={styles.title}>Chats</Text>
-
-            {loading ? (
-                <Text style={styles.loadingText}>Loading chats...</Text>
-            ) : (
-                <FlatList
-                    data={[...chatPartners, ...groups.map((group) => `group-${group.id}`)]}
-                    keyExtractor={(item, index) => `${item}-${index}`}
-                    renderItem={({ item }) => {
-                        if (item.startsWith("group-")) {
-                            const groupId = parseInt(item.split("-")[1], 10);
-                            const group = groups.find((g) => g.id === groupId);
-                            return (
-                                <Pressable
-                                    style={styles.chatContainer}
-                                    onPress={() => group && handleOpenGroup(group.id, group.name)}
-                                >
-                                    <Text style={styles.chatFriend}>{group?.name}</Text>
-                                </Pressable>
-                            );
-                        }
-                        return (
-                            <Pressable
-                                style={styles.chatContainer}
-                                onPress={() => handleOpenChat(item)}
-                            >
-                                <Text style={styles.chatFriend}>{item}</Text>
-                            </Pressable>
-                        );
-                    }}
-                    ListFooterComponent={
+                {loading ? (
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="large" color="white" />
+                    </View>
+                ) : (
+                    <View style={{ flex: 1 }}>
+                        <FlatList
+                            data={[...chatPartners, ...groups.map((group) => `group-${group.id}`)]}
+                            keyExtractor={(item, index) => `${item}-${index}`}
+                            renderItem={({ item }) => {
+                                if (item.startsWith("group-")) {
+                                    const groupId = parseInt(item.split("-")[1], 10);
+                                    const group = groups.find((g) => g.id === groupId);
+                                    return (
+                                        <Pressable
+                                            style={styles.chatContainer}
+                                            onPress={() =>
+                                                group && handleOpenGroup(group.id, group.name)
+                                            }
+                                        >
+                                            <View style={styles.chatText}>
+                                                <FontAwesome size={20} name="group" color={"blue"} />
+                                                <Text style={styles.chatGroup}>{group?.name}</Text>
+                                            </View>
+                                        </Pressable>
+                                    );
+                                }
+                                return (
+                                    <Pressable
+                                        style={styles.chatContainer}
+                                        onPress={() => handleOpenChat(item)}
+                                    >
+                                        <View style={styles.chatText2}>
+                                            <FontAwesome size={20} name="user" color={"red"} />
+                                            <Text style={styles.chatFriend}>{item}</Text>
+                                        </View>
+                                    </Pressable>
+                                );
+                            }}
+                        />
                         <Pressable style={styles.newChatButton} onPress={handleNewChat}>
                             <Text style={styles.newChatButtonText}>New Chat</Text>
                         </Pressable>
-                    }
-                />
-            )}
-        </View>
+                    </View>
+                )}
+            </View>
+        </ImageBackground>
     );
 }
 
 const styles = StyleSheet.create({
+    background: {
+        flex: 1,
+        resizeMode: "cover",
+    },
     container: {
         flex: 1,
-        backgroundColor: "#25292e",
         paddingHorizontal: 20,
-        paddingTop: 50,
+        paddingTop: 30,
     },
     header: {
         flexDirection: "row",
-        justifyContent: "flex-end",
-        marginBottom: 10,
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 20,
+        paddingHorizontal: 10,
     },
     logoutButton: {
-        marginRight: 10,
-    },
-    logoutButtonText: {
-        color: "white",
-        fontSize: 16,
-        textDecorationLine: "underline",
+        justifyContent: "center",
     },
     title: {
-        color: "#9eb7ef",
-        fontSize: 24,
+        color: "#333",
+        fontSize: 32,
         fontWeight: "bold",
-        alignSelf: "center",
-        marginBottom: 20,
+        flex: 1,
+        textAlign: "center",
     },
     chatContainer: {
-        backgroundColor: "#333",
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
         padding: 15,
         borderRadius: 10,
-        marginBottom: 10,
+        marginBottom: 15,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        flexDirection: "row",
+        alignItems: "center",
+        alignSelf: "center",
+        width: "90%",
+    },
+    chatText: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    chatText2: {
+        marginLeft: 2,
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    chatGroup: {
+        color: "blue",
+        fontSize: 17,
+        fontWeight: "bold",
+        marginLeft: 10,
     },
     chatFriend: {
-        color: "#9eb7ef",
-        fontSize: 18,
+        color: "red",
+        fontSize: 17,
         fontWeight: "bold",
+        marginLeft: 14,
     },
     newChatButton: {
-        backgroundColor: "#4caf50",
+        backgroundColor: "rgba(76, 175, 80, 1)",
         padding: 15,
-        borderRadius: 10,
+        borderRadius: 15,
         alignItems: "center",
-        marginVertical: 20,
+        justifyContent: "center",
+        alignSelf: "center",
+        marginTop: 15,
+        width: "50%",
+        marginBottom: 15,
     },
     newChatButtonText: {
         color: "white",
         fontSize: 16,
         fontWeight: "bold",
     },
-    loadingText: {
-        color: "white",
-        fontSize: 16,
-        textAlign: "center",
-        marginTop: 20,
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
     },
 });

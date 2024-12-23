@@ -3,13 +3,13 @@ import { Tabs } from "expo-router";
 
 export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "green" }}>
+    <Tabs screenOptions={{ tabBarActiveTintColor: "gray" }}>
         <Tabs.Screen
             name="chats"
             options={{
                 title: "Chats",
                 tabBarIcon: ({ color }) => (
-                    <FontAwesome size={28} name="home" color={color} />
+                    <FontAwesome size={28} name="home" color={"green"} />
                 ),
                 headerShown: false,
             }}
@@ -19,7 +19,7 @@ export default function TabLayout() {
             options={{
                 title: "Friends",
                 tabBarIcon: ({ color }) => (
-                    <FontAwesome size={28} name="user" color={color} />
+                    <FontAwesome size={28} name="user" color={"red"} />
                 ),
                 headerShown: false,
             }}
@@ -29,7 +29,7 @@ export default function TabLayout() {
             options={{
                 title: "Groups",
                 tabBarIcon: ({ color }) => (
-                    <FontAwesome size={28} name="group" color={color} />
+                    <FontAwesome size={28} name="group" color={"blue"} />
                 ),
                 headerShown: false,
             }}

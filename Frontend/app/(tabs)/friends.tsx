@@ -4,13 +4,15 @@ import {
     Text,
     StyleSheet,
     FlatList,
-    ActivityIndicator,
     Alert,
     Pressable,
+    ImageBackground,
+    ActivityIndicator,
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../../config";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 interface APIResponse<T> {
     status: number;
@@ -22,7 +24,6 @@ export default function Friends() {
     const router = useRouter();
     const [friends, setFriends] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [nickname, setNickname] = useState<string | null>(null);
 
     const getToken = async (): Promise<string | null> => {
         return AsyncStorage.getItem("token");
@@ -43,8 +44,6 @@ export default function Friends() {
                 router.push("/login");
                 return;
             }
-
-            setNickname(storedNickname);
 
             const response = await fetch(
                 `${API_URL}/friends?nickname=${storedNickname}`,
@@ -80,16 +79,6 @@ export default function Friends() {
         router.push("/login");
     };
 
-    useEffect(() => {
-        fetchFriends();
-    }, []);
-
-    useFocusEffect(
-        React.useCallback(() => {
-            fetchFriends();
-        }, [])
-    );
-
     const handleAddFriend = () => {
         router.push("./addfriend");
     };
@@ -99,82 +88,90 @@ export default function Friends() {
     };
 
     const renderFriend = ({ item }: { item: string }) => (
-        <View style={styles.friendContainer}>
-            <Text style={styles.friendName}>{item}</Text>
-        </View>
+        <Pressable style={styles.friendContainer}>
+            <View style={styles.friendContent}>
+                <FontAwesome size={20} name="user" color={"black"} />
+                <Text style={styles.friendName}>{item}</Text>
+            </View>
+        </Pressable>
     );
 
-    if (loading) {
-        return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#9eb7ef" />
-            </View>
-        );
-    }
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchFriends();
+        }, [])
+    );
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Pressable style={styles.logoutButton} onPress={handleLogout}>
-                    <Text style={styles.logoutButtonText}>Logout</Text>
-                </Pressable>
+        <ImageBackground
+            source={require("../../assets/images/friendsbg3.jpg")}
+            style={styles.background}
+        >
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.title}>{"  "} Friends</Text>
+                    <Pressable style={styles.logoutButton} onPress={handleLogout}>
+                        <FontAwesome size={28} name="sign-out" color={"black"} />
+                    </Pressable>
+                </View>
+
+                {loading ? (
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="large" color="white" />
+                    </View>
+                ) : friends.length === 0 ? (
+                    <Text style={styles.noFriends}>No friends found.</Text>
+                ) : (
+                    <FlatList
+                        data={friends}
+                        keyExtractor={(item, index) => `${index}-${item}`}
+                        renderItem={renderFriend}
+                    />
+                )}
+
+                <View style={styles.buttonRow}>
+                    <Pressable style={styles.addButton} onPress={handleAddFriend}>
+                        <Text style={styles.addButtonText}>Add Friend</Text>
+                    </Pressable>
+                    <Pressable style={styles.requestsButton} onPress={handleFriendRequests}>
+                        <Text style={styles.requestsButtonText}>Friend Requests</Text>
+                    </Pressable>
+                </View>
             </View>
-
-            <Text style={styles.title}>Friends</Text>
-
-            {friends.length === 0 ? (
-                <Text style={styles.noFriends}>No friends found.</Text>
-            ) : (
-                <FlatList
-                    data={friends}
-                    keyExtractor={(item, index) => `${index}-${item}`}
-                    renderItem={renderFriend}
-                />
-            )}
-
-            <Pressable style={styles.topButton} onPress={handleAddFriend}>
-                <Text style={styles.topButtonText}>Add Friend</Text>
-            </Pressable>
-            <Pressable style={styles.topButton} onPress={handleFriendRequests}>
-                <Text style={styles.topButtonText}>Friend Requests</Text>
-            </Pressable>
-        </View>
+        </ImageBackground>
     );
 }
 
 const styles = StyleSheet.create({
+    background: {
+        flex: 1,
+        resizeMode: "cover",
+    },
     container: {
         flex: 1,
-        backgroundColor: "#25292e",
         paddingHorizontal: 20,
-        paddingTop: 50,
+        paddingTop: 30,
     },
     header: {
         flexDirection: "row",
-        justifyContent: "flex-end",
         alignItems: "center",
-        marginBottom: 10,
-    },
-    logoutButton: {
-        marginRight: 10,
-    },
-    logoutButtonText: {
-        color: "white",
-        fontSize: 16,
-        textDecorationLine: "underline",
-    },
-    loadingContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#25292e",
+        justifyContent: "space-between",
+        marginBottom: 20,
     },
     title: {
-        color: "#9eb7ef",
-        fontSize: 24,
+        color: "#333",
+        fontSize: 32,
         fontWeight: "bold",
-        alignSelf: "center",
-        marginBottom: 20,
+        textAlign: "center",
+        flex: 1,
+    },
+    logoutButton: {
+        justifyContent: "center",
+    },
+    logoutButtonText: {
+        color: "black",
+        fontSize: 16,
+        fontWeight: "bold",
     },
     noFriends: {
         color: "white",
@@ -183,25 +180,60 @@ const styles = StyleSheet.create({
         marginTop: 30,
     },
     friendContainer: {
-        backgroundColor: "#333",
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
         padding: 15,
         borderRadius: 10,
         marginBottom: 15,
+        flexDirection: "row",
+        alignItems: "center",
+        alignSelf: "center",
+        width: "90%",
+    },
+    friendContent: {
+        flexDirection: "row",
+        alignItems: "center",
     },
     friendName: {
-        color: "white",
-        fontSize: 16,
+        color: "#333",
+        fontSize: 17,
+        fontWeight: "bold",
+        marginLeft: 10,
     },
-    topButton: {
-        marginTop: 20,
-        backgroundColor: "#55af55",
-        borderRadius: 10,
+    buttonRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 15,
+        marginBottom: 15,
+    },
+    addButton: {
+        backgroundColor: "#4CAF50",
+        padding: 15,
+        borderRadius: 15,
         alignItems: "center",
         justifyContent: "center",
-        height: 40,
+        width: "48%",
     },
-    topButtonText: {
+    addButtonText: {
         color: "white",
         fontSize: 16,
+        fontWeight: "bold",
+    },
+    requestsButton: {
+        backgroundColor: "#3498db",
+        padding: 15,
+        borderRadius: 15,
+        alignItems: "center",
+        justifyContent: "center",
+        width: "48%",
+    },
+    requestsButtonText: {
+        color: "white",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
     },
 });

@@ -9,9 +9,11 @@ import {
     Alert,
     Pressable,
     Modal,
+    ImageBackground,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../../config";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 interface APIResponse<T> {
     status: number;
@@ -35,7 +37,6 @@ export default function Groups() {
     const router = useRouter();
     const [groups, setGroups] = useState<Group[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [nickname, setNickname] = useState<string | null>(null);
     const [modalVisible, setModalVisible] = useState<boolean>(false);
     const [selectedGroup, setSelectedGroup] = useState<GroupDetails | null>(null);
 
@@ -44,6 +45,7 @@ export default function Groups() {
     };
 
     const fetchGroups = async () => {
+        setLoading(true);
         try {
             const token = await getToken();
             if (!token) {
@@ -58,8 +60,6 @@ export default function Groups() {
                 router.push("/login");
                 return;
             }
-
-            setNickname(storedNickname);
 
             const response = await fetch(
                 `${API_URL}/groups?nickname=${storedNickname}`,
@@ -81,10 +81,7 @@ export default function Groups() {
             if (result.status === 1 && Array.isArray(result.data)) {
                 setGroups(result.data);
             } else {
-                Alert.alert(
-                    "Error",
-                    result.message || "Failed to fetch groups list."
-                );
+                Alert.alert("Error", result.message || "Failed to fetch groups list.");
             }
         } catch (error: any) {
             console.error("Fetch Groups Error:", error);
@@ -93,20 +90,6 @@ export default function Groups() {
             setLoading(false);
         }
     };
-
-    useEffect(() => {
-        // Fetch groups when the component mounts
-        setLoading(true);
-        fetchGroups();
-    }, []);
-
-    useFocusEffect(
-        useCallback(() => {
-            // Refetch groups when the screen regains focus
-            setLoading(true);
-            fetchGroups();
-        }, [])
-    );
 
     const fetchGroupDetails = async (groupId: number) => {
         try {
@@ -133,10 +116,7 @@ export default function Groups() {
                 setSelectedGroup(result.data);
                 setModalVisible(true);
             } else {
-                Alert.alert(
-                    "Error",
-                    result.message || "Failed to fetch group details."
-                );
+                Alert.alert("Error", result.message || "Failed to fetch group details.");
             }
         } catch (error: any) {
             console.error("Fetch Group Details Error:", error);
@@ -144,16 +124,10 @@ export default function Groups() {
         }
     };
 
-    const renderGroup = ({ item }: { item: Group }) => (
-        <View style={styles.groupContainer}>
-            <Text style={styles.groupName}>{item.name}</Text>
-            <Pressable
-                style={styles.infoButton}
-                onPress={() => fetchGroupDetails(item.id)}
-            >
-                <Text style={styles.infoButtonText}>Info</Text>
-            </Pressable>
-        </View>
+    useFocusEffect(
+        useCallback(() => {
+            fetchGroups();
+        }, [])
     );
 
     const handleCreateGroup = () => {
@@ -165,145 +139,146 @@ export default function Groups() {
         router.push("/login");
     };
 
-    if (loading) {
-        return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#9eb7ef" />
+    const renderGroup = ({ item }: { item: Group }) => (
+        <Pressable style={styles.groupContainer} onPress={() => fetchGroupDetails(item.id)}>
+            <View style={styles.groupContent}>
+                <FontAwesome size={20} name="group" color={"black"} />
+                <Text style={styles.groupName}>{item.name}</Text>
             </View>
-        );
-    }
+        </Pressable>
+    );
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Pressable style={styles.logoutButton} onPress={handleLogout}>
-                    <Text style={styles.logoutButtonText}>Logout</Text>
-                </Pressable>
-            </View>
+        <ImageBackground
+            source={require("../../assets/images/friendsbg3.jpg")}
+            style={styles.background}
+        >
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.title}>{"  "} Groups</Text>
+                    <Pressable style={styles.logoutButton} onPress={handleLogout}>
+                        <FontAwesome size={28} name="sign-out" color={"black"} />
+                    </Pressable>
+                </View>
 
-            <Text style={styles.title}>Groups</Text>
-
-            {groups.length === 0 ? (
-                <Text style={styles.noGroups}>No groups found.</Text>
-            ) : (
-                <FlatList
-                    data={groups}
-                    keyExtractor={(item, index) => `${item.id}-${index}`} // Ensures unique keys
-                    renderItem={renderGroup}
-                />
-
-            )}
-
-            <View style={styles.topLeftContainer}>
-                <Pressable style={styles.topButton} onPress={handleCreateGroup}>
-                    <Text style={styles.topButtonText}>Create Group</Text>
-                </Pressable>
-            </View>
-
-            {selectedGroup && (
-                <Modal visible={modalVisible} transparent={true} animationType="slide">
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalContent}>
-                            <Text style={styles.modalTitle}>{selectedGroup.name}</Text>
-                            <Text style={styles.modalText}>
-                                Created Time: {selectedGroup.createdTime}
-                            </Text>
-                            <Text style={styles.modalText}>Members:</Text>
-                            {selectedGroup.members.map((member, index) => (
-                                <Text key={index} style={styles.modalText}>
-                                    {member}
-                                </Text>
-                            ))}
-                            <Pressable
-                                style={styles.closeButton}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <Text style={styles.closeButtonText}>Close</Text>
-                            </Pressable>
-                        </View>
+                {loading ? (
+                    <View style={styles.loadingContainer}>
+                        <ActivityIndicator size="large" color="white" />
                     </View>
-                </Modal>
-            )}
-        </View>
+                ) : groups.length === 0 ? (
+                    <Text style={styles.noGroups}>No groups found.</Text>
+                ) : (
+                    <FlatList
+                        data={groups}
+                        keyExtractor={(item, index) => `${item.id}-${index}`}
+                        renderItem={renderGroup}
+                    />
+                )}
+
+                <Pressable style={styles.createGroupButton} onPress={handleCreateGroup}>
+                    <Text style={styles.createGroupButtonText}>Create Group</Text>
+                </Pressable>
+
+                {selectedGroup && (
+                    <Modal visible={modalVisible} transparent={true} animationType="slide">
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalContent}>
+                                <Text style={styles.modalTitle}>{selectedGroup.name}</Text>
+                                <Text style={styles.modalText}>
+                                    Created Time: {selectedGroup.createdTime}
+                                </Text>
+                                <Text style={styles.modalText}>Members:</Text>
+                                {selectedGroup.members.map((member, index) => (
+                                    <Text key={index} style={styles.modalText}>
+                                        {member}
+                                    </Text>
+                                ))}
+                                <Pressable
+                                    style={styles.closeButton}
+                                    onPress={() => setModalVisible(false)}
+                                >
+                                    <Text style={styles.closeButtonText}>Close</Text>
+                                </Pressable>
+                            </View>
+                        </View>
+                    </Modal>
+                )}
+            </View>
+        </ImageBackground>
     );
 }
 
-
 const styles = StyleSheet.create({
+    background: {
+        flex: 1,
+        resizeMode: "cover",
+    },
     container: {
         flex: 1,
-        backgroundColor: "#25292e",
-        paddingTop: 30,
         paddingHorizontal: 20,
+        paddingTop: 30,
     },
     header: {
         flexDirection: "row",
-        justifyContent: "flex-end",
         alignItems: "center",
-        marginBottom: 10,
-    },
-    logoutButton: {
-        marginRight: 10,
-    },
-    logoutButtonText: {
-        color: "white",
-        fontSize: 16,
-        textDecorationLine: "underline",
-    },
-    loadingContainer: {
-        flex: 1,
-        backgroundColor: "#25292e",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    topLeftContainer: {
-        justifyContent: "center",
-        alignItems: "center",
-        marginBottom: 10,
-    },
-    topButton: {
-        marginRight: 10,
-    },
-    topButtonText: {
-        color: "white",
-        fontSize: 20,
-        textDecorationLine: "underline",
+        justifyContent: "space-between",
+        marginBottom: 20,
     },
     title: {
-        color: "#9eb7ef",
-        fontSize: 24,
-        marginBottom: 20,
+        color: "#333",
+        fontSize: 32,
         fontWeight: "bold",
-        alignSelf: "center",
-        marginTop: 40,
+        textAlign: "center",
+        flex: 1,
+    },
+    logoutButton: {
+        justifyContent: "center",
+    },
+    logoutButtonText: {
+        color: "black",
+        fontSize: 16,
+        fontWeight: "bold",
     },
     noGroups: {
         color: "white",
         alignSelf: "center",
-        marginTop: 30,
         fontSize: 18,
+        marginTop: 30,
     },
     groupContainer: {
-        backgroundColor: "#333",
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
         padding: 15,
         borderRadius: 10,
         marginBottom: 15,
         flexDirection: "row",
-        justifyContent: "space-between",
+        alignItems: "center",
+        alignSelf: "center",
+        width: "90%",
+    },
+    groupContent: {
+        flexDirection: "row",
         alignItems: "center",
     },
     groupName: {
+        color: "#333",
+        fontSize: 17,
+        fontWeight: "bold",
+        marginLeft: 10,
+    },
+    createGroupButton: {
+        backgroundColor: "#3498db",
+        padding: 15,
+        borderRadius: 15,
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 15,
+        marginBottom: 15,
+        width: "50%",
+        alignSelf: "center",
+    },
+    createGroupButtonText: {
         color: "white",
         fontSize: 16,
-    },
-    infoButton: {
-        padding: 8,
-        backgroundColor: "#9eb7ef",
-        borderRadius: 5,
-    },
-    infoButtonText: {
-        color: "#25292e",
-        fontSize: 14,
         fontWeight: "bold",
     },
     modalContainer: {
@@ -337,5 +312,10 @@ const styles = StyleSheet.create({
     closeButtonText: {
         color: "#25292e",
         fontWeight: "bold",
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
     },
 });

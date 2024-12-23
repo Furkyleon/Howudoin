@@ -155,11 +155,14 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     addButton: {
+        marginBottom: 15,
         backgroundColor: "#55af55",
         borderRadius: 10,
         alignItems: "center",
         justifyContent: "center",
-        height: 40,
+        alignSelf: "center",
+        height: 50,
+        width: "50%",
     },
     addButtonText: {
         color: "white",
