@@ -2,16 +2,21 @@ import React, { useEffect, useState } from "react";
 import {
     View,
     Text,
+    FlatList,
+    Pressable,
+    StyleSheet,
     TextInput,
     Button,
-    StyleSheet,
-    FlatList,
     Alert,
     ActivityIndicator,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../../config";
+
+interface Friend {
+    nickname: string;
+}
 
 interface Message {
     id: number;
@@ -21,26 +26,66 @@ interface Message {
 }
 
 export default function NewMessagePage() {
-    const { friend } = useLocalSearchParams();
+    const router = useRouter();
+    const [friends, setFriends] = useState<Friend[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
+    const [loadingFriends, setLoadingFriends] = useState<boolean>(true);
+    const [loadingMessages, setLoadingMessages] = useState<boolean>(false);
     const [newMessage, setNewMessage] = useState<string>("");
     const [nickname, setNickname] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
 
-    const fetchMessages = async () => {
+    const getToken = async (): Promise<string | null> => {
+        return AsyncStorage.getItem("token");
+    };
+
+    // Fetch friends list from API
+    const fetchFriends = async () => {
+        try {
+            const token = await getToken();
+            const storedNickname = await AsyncStorage.getItem("nickname");
+
+            if (!token || !storedNickname) {
+                Alert.alert("Error", "Authentication failed. Please log in again.");
+                router.push("/login");
+                return;
+            }
+
+            setNickname(storedNickname);
+
+            const response = await fetch(`${API_URL}/friends?nickname=${storedNickname}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            const result = await response.json();
+
+            if (result.status === 1 && Array.isArray(result.data)) {
+                setFriends(result.data.map((nickname: string) => ({ nickname })));
+            } else {
+                setFriends([]);
+                Alert.alert("Info", result.message || "No friends found.");
+            }
+        } catch (error) {
+            console.error("Fetch Friends Error:", error);
+            Alert.alert("Error", "Failed to fetch friends.");
+        }
+    };
+
+    // Fetch messages between two users
+    const fetchMessages = async (friend: string) => {
         try {
             setMessages([]);
-            setLoading(true);
 
-            const token = await AsyncStorage.getItem("token");
+            const token = await getToken();
             const storedNickname = await AsyncStorage.getItem("nickname");
 
             if (!token || !storedNickname) {
                 Alert.alert("Error", "Authentication failed. Please log in again.");
                 return;
             }
-
-            setNickname(storedNickname);
 
             const response = await fetch(
                 `${API_URL}/messagesbetween?nickname=${storedNickname}&friend=${friend}`,
@@ -62,18 +107,26 @@ export default function NewMessagePage() {
                 console.warn(result.message || "No messages found.");
             }
         } catch (error) {
-            console.error("Error Fetching Messages:", error);
+            console.error("Fetch Messages Error:", error);
             Alert.alert("Error", "Failed to fetch messages.");
-        } finally {
-            setLoading(false); // Stop loading spinner
         }
+
     };
 
+    // Handle starting a chat
+    const handleStartChat = (friend: string) => {
+        router.push({
+            pathname: "./friendmessages",
+            params: { friend },
+        });
+    };
+
+    // Handle sending a message
     const handleSendMessage = async () => {
         if (!newMessage.trim()) return;
 
         try {
-            const token = await AsyncStorage.getItem("token");
+            const token = await getToken();
             const storedNickname = await AsyncStorage.getItem("nickname");
 
             if (!token || !storedNickname) {
@@ -110,13 +163,10 @@ export default function NewMessagePage() {
     };
 
     useEffect(() => {
-        fetchMessages();
-        return () => {
-            setMessages([]);
-        };
-    }, [friend]);
+        fetchFriends();
+    }, []);
 
-    if (loading) {
+    if (loadingFriends) {
         return (
             <View style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color="#9eb7ef" />
@@ -126,30 +176,22 @@ export default function NewMessagePage() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Chat with {friend}</Text>
+            <Text style={styles.title}>Select a Friend</Text>
             <FlatList
                 data={friends}
-                keyExtractor={(item, index) => `${item}-${index}`} // Ensures unique keys
+                keyExtractor={(item) => item.nickname} // Ensure keys are unique
                 renderItem={({ item }) => (
                     <Pressable
                         style={styles.friendContainer}
-                        onPress={() => handleStartChat(item)}
+                        onPress={() => handleStartChat(item.nickname)}
                     >
-                        <Text style={styles.friendName}>{item}</Text>
+                        <Text style={styles.friendName}>{item.nickname}</Text>
                     </Pressable>
                 )}
+                ListEmptyComponent={
+                    <Text style={styles.noFriends}>You have no friends to start a chat with.</Text>
+                }
             />
-
-            <View style={styles.inputContainer}>
-                <TextInput
-                    style={styles.input}
-                    value={newMessage}
-                    onChangeText={setNewMessage}
-                    placeholder="Type a message"
-                    placeholderTextColor="gray"
-                />
-                <Button title="Send" onPress={handleSendMessage} />
-            </View>
         </View>
     );
 }
@@ -162,43 +204,28 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 20,
-        color: "white",
+        color: "red",
         marginBottom: 20,
         alignSelf: "center",
+        paddingTop: 20, // Add padding to increase spacing within the element
+        marginTop: 100, // Large value to test for visual change
     },
-    messageList: {
-        flex: 1,
+    friendContainer: {
+        backgroundColor: "#333",
+        padding: 15,
+        borderRadius: 10,
         marginBottom: 10,
     },
-    messageContainer: {
-        padding: 10,
-        borderRadius: 10,
-        marginBottom: 5,
+    friendName: {
+        color: "#9eb7ef",
+        fontSize: 18,
+        fontWeight: "bold",
     },
-    myMessage: {
-        backgroundColor: "#4caf50",
-        alignSelf: "flex-end",
-    },
-    theirMessage: {
-        backgroundColor: "#333",
-        alignSelf: "flex-start",
-    },
-    messageText: {
+    noFriends: {
         color: "white",
         fontSize: 16,
-    },
-    inputContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-    },
-    input: {
-        flex: 1,
-        backgroundColor: "#333",
-        color: "white",
-        padding: 10,
-        borderRadius: 10,
-        marginRight: 10,
+        textAlign: "center",
+        marginTop: 20,
     },
     loadingContainer: {
         flex: 1,
@@ -207,3 +234,4 @@ const styles = StyleSheet.create({
         backgroundColor: "#25292e",
     },
 });
+

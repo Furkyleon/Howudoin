@@ -5,7 +5,6 @@ import {
     FlatList,
     StyleSheet,
     Pressable,
-    ActivityIndicator,
     Alert,
 } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
@@ -136,14 +135,6 @@ export default function MainPage() {
         }, [])
     );
 
-    if (loading) {
-        return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#9eb7ef" />
-            </View>
-        );
-    }
-
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -154,37 +145,41 @@ export default function MainPage() {
 
             <Text style={styles.title}>Chats</Text>
 
-            <FlatList
-                data={[...chatPartners, ...groups.map((group) => `group-${group.id}`)]}
-                keyExtractor={(item, index) => `${item}-${index}`}
-                renderItem={({ item }) => {
-                    if (item.startsWith("group-")) {
-                        const groupId = parseInt(item.split("-")[1], 10);
-                        const group = groups.find((g) => g.id === groupId);
+            {loading ? (
+                <Text style={styles.loadingText}>Loading chats...</Text>
+            ) : (
+                <FlatList
+                    data={[...chatPartners, ...groups.map((group) => `group-${group.id}`)]}
+                    keyExtractor={(item, index) => `${item}-${index}`}
+                    renderItem={({ item }) => {
+                        if (item.startsWith("group-")) {
+                            const groupId = parseInt(item.split("-")[1], 10);
+                            const group = groups.find((g) => g.id === groupId);
+                            return (
+                                <Pressable
+                                    style={styles.chatContainer}
+                                    onPress={() => group && handleOpenGroup(group.id, group.name)}
+                                >
+                                    <Text style={styles.chatFriend}>{group?.name}</Text>
+                                </Pressable>
+                            );
+                        }
                         return (
                             <Pressable
                                 style={styles.chatContainer}
-                                onPress={() => group && handleOpenGroup(group.id, group.name)}
+                                onPress={() => handleOpenChat(item)}
                             >
-                                <Text style={styles.chatFriend}>{group?.name}</Text>
+                                <Text style={styles.chatFriend}>{item}</Text>
                             </Pressable>
                         );
-                    }
-                    return (
-                        <Pressable
-                            style={styles.chatContainer}
-                            onPress={() => handleOpenChat(item)}
-                        >
-                            <Text style={styles.chatFriend}>{item}</Text>
+                    }}
+                    ListFooterComponent={
+                        <Pressable style={styles.newChatButton} onPress={handleNewChat}>
+                            <Text style={styles.newChatButtonText}>New Chat</Text>
                         </Pressable>
-                    );
-                }}
-                ListFooterComponent={
-                    <Pressable style={styles.newChatButton} onPress={handleNewChat}>
-                        <Text style={styles.newChatButtonText}>New Chat</Text>
-                    </Pressable>
-                }
-            />
+                    }
+                />
+            )}
         </View>
     );
 }
@@ -216,12 +211,6 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         marginBottom: 20,
     },
-    subTitle: {
-        color: "#9eb7ef",
-        fontSize: 20,
-        fontWeight: "bold",
-        marginBottom: 10,
-    },
     chatContainer: {
         backgroundColor: "#333",
         padding: 15,
@@ -245,10 +234,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
     },
-    loadingContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#25292e",
+    loadingText: {
+        color: "white",
+        fontSize: 16,
+        textAlign: "center",
+        marginTop: 20,
     },
 });
