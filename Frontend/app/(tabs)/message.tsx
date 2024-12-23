@@ -5,7 +5,7 @@ import {
     TextInput,
     Button,
     StyleSheet,
-    FlatList,
+    ScrollView,
     Alert,
     ActivityIndicator,
 } from "react-native";
@@ -30,9 +30,6 @@ export default function MessagePage() {
     // Fetch Messages
     const fetchMessages = async () => {
         try {
-            setMessages([]); // Clear existing messages immediately
-            setLoading(true); // Start loading spinner
-
             const token = await AsyncStorage.getItem("token");
             const storedNickname = await AsyncStorage.getItem("nickname");
 
@@ -65,8 +62,6 @@ export default function MessagePage() {
         } catch (error) {
             console.error("Error Fetching Messages:", error);
             Alert.alert("Error", "Failed to fetch messages.");
-        } finally {
-            setLoading(false); // Stop loading spinner
         }
     };
 
@@ -111,38 +106,48 @@ export default function MessagePage() {
         }
     };
 
-    // Trigger fetching messages whenever `friend` changes
     useEffect(() => {
+        // Fetch messages immediately when the component mounts or the `friend` changes
         fetchMessages();
-    }, [friend]); // Dependency ensures new messages are fetched for each friend
+
+        // Set up an interval to fetch messages every 5 seconds
+        const interval = setInterval(() => {
+            fetchMessages();
+        }, 5000);
+
+        // Cleanup function to clear the interval and messages array
+        return () => {// neden dönüyor mesaj fetch lerken
+            clearInterval(interval); // Clear the interval when leaving the page or when `friend` changes
+            setMessages([]); // Clear the messages array when leaving the page
+        };
+    }, [friend]); // Dependency ensures the effect runs when the `friend` changes
+
 
     // Show loading spinner while fetching messages
-    if (loading) {
-        return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#9eb7ef" />
-            </View>
-        );
-    }
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Chat with {friend}</Text>
-            <FlatList
-                data={messages}
-                keyExtractor={(item) => item._id.toString()}
-                renderItem={({ item }) => (
-                    <View
-                        style={[
-                            styles.messageContainer,
-                            item.sender === nickname ? styles.myMessage : styles.theirMessage,
-                        ]}
-                    >
-                        <Text style={styles.messageText}>{item.content}</Text>
-                    </View>
+            <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
+                {messages.length > 0 ? (
+                    messages.map((message, index) => (
+                        <View
+                            key={`${message._id || index}`} // Use _id if unique, fallback to index
+                            style={[
+                                styles.messageBubble,
+                                message.sender === nickname
+                                    ? styles.messageRight // Sender's message
+                                    : styles.messageLeft, // Receiver's message
+                            ]}
+                        >
+                            <Text style={styles.messageText}>{message.content}</Text>
+                            <Text style={styles.messageSender}>{message.sender}</Text>
+                        </View>
+                    ))
+                ) : (
+                    <Text style={styles.noMessagesText}>No messages yet</Text>
                 )}
-                style={styles.messageList}
-            />
+            </ScrollView>
             <View style={styles.inputContainer}>
                 <TextInput
                     style={styles.input}
@@ -168,27 +173,35 @@ const styles = StyleSheet.create({
         color: "white",
         marginBottom: 20,
         alignSelf: "center",
+        marginTop: 40,
     },
-    messageList: {
+    scrollContainer: {
         flex: 1,
-        marginBottom: 10,
     },
-    messageContainer: {
+    scrollContent: {
+        paddingBottom: 10,
+    },
+    messageBubble: {
         padding: 10,
         borderRadius: 10,
         marginBottom: 5,
     },
-    myMessage: {
+    messageRight: {
         backgroundColor: "#4caf50",
         alignSelf: "flex-end",
     },
-    theirMessage: {
+    messageLeft: {
         backgroundColor: "#333",
         alignSelf: "flex-start",
     },
     messageText: {
         color: "white",
         fontSize: 16,
+    },
+    messageSender: {
+        color: "gray",
+        fontSize: 12,
+        marginTop: 5,
     },
     inputContainer: {
         flexDirection: "row",
@@ -208,5 +221,10 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#25292e",
+    },
+    noMessagesText: {
+        color: "gray",
+        textAlign: "center",
+        marginTop: 20,
     },
 });

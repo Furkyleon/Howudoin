@@ -99,6 +99,9 @@ public class MessageController {
     @PostMapping("/messages/send")
     public ResponseEntity<APIResponse<String>> sendMessage(@RequestHeader("Authorization") String token,
                                                            @RequestBody Message message) {
+        System.out.println("Sending message: " + message);
+        System.out.println("User: " + message.getSender());
+        System.out.println("Reciever: " + message.getReceiver());
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
