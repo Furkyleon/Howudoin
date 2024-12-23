@@ -46,11 +46,11 @@ public class MessageController {
         return ResponseEntity.ok(new APIResponse<>(1, "Messages are retrieved successfully!", messages));
     }
 
-    // GET /messages: Retrieve conversation history between two user
     @GetMapping("/messagesbetween")
-    public ResponseEntity<APIResponse<List<Message>>> getMessagesBetweenTwoUsers(@RequestHeader("Authorization") String token,
-                                                                                 @RequestParam("nickname") String nickname,
-                                                                                 @RequestParam("friend") String friend) {
+    public ResponseEntity<APIResponse<List<Message>>> getMessagesBetweenTwoUsers(
+            @RequestHeader("Authorization") String token,
+            @RequestParam("nickname") String nickname,
+            @RequestParam("friend") String friend) {
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 
@@ -59,21 +59,49 @@ public class MessageController {
                     .body(new APIResponse<>(0, "Invalid Token", null));
         }
 
-        User user = userService.getUser(nickname);
-        User friendUser = userService.getUser(friend);
-        List<Message> messages = messageService.getMessagesBetween(user, friendUser);
+        try {
+            // Log the incoming request details
+            System.out.println("Fetching messages between: " + nickname + " and " + friend);
 
-        if (messages.isEmpty()) {
-            return ResponseEntity.ok(new APIResponse<>(0, "No messages.", messages));
+            User user = userService.getUser(nickname);
+            User friendUser = userService.getUser(friend);
+
+            // Log user details
+            System.out.println("User: " + (user != null ? user.getNickname() : "null"));
+            System.out.println("Friend: " + (friendUser != null ? friendUser.getNickname() : "null"));
+
+            if (user == null || friendUser == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new APIResponse<>(0, "User or friend not found.", null));
+            }
+
+            List<Message> messages = messageService.getMessagesBetween(user, friendUser);
+
+            // Log retrieved messages
+            System.out.println("Messages retrieved: " + (messages != null ? messages.size() : 0));
+
+            if (messages == null || messages.isEmpty()) {
+                return ResponseEntity.ok(new APIResponse<>(0, "No messages.", messages));
+            }
+
+            return ResponseEntity.ok(new APIResponse<>(1, "Messages retrieved successfully!", messages));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new APIResponse<>(0, "An error occurred while retrieving messages.", null));
         }
-
-        return ResponseEntity.ok(new APIResponse<>(1, "Messages are retrieved successfully!", messages));
     }
+
+
+
 
     // POST /messages/send: Send a message to a friend
     @PostMapping("/messages/send")
     public ResponseEntity<APIResponse<String>> sendMessage(@RequestHeader("Authorization") String token,
                                                            @RequestBody Message message) {
+        System.out.println("Sending message: " + message);
+        System.out.println("User: " + message.getSender());
+        System.out.println("Reciever: " + message.getReceiver());
         String jwt = extractJwt(token);
         String email = jwtUtil.extractEmail(jwt);
 

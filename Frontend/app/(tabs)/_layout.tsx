@@ -62,6 +62,20 @@ export default function TabLayout() {
           headerShown: false,
         }}
       />
+        <Tabs.Screen
+            name="newmessagebox"
+            options={{
+                href: null,
+                headerShown: false,
+            }}
+        />
+        <Tabs.Screen
+            name="message"
+            options={{
+                href: null,
+                headerShown: false,
+            }}
+        />
     </Tabs>
   );
 }
