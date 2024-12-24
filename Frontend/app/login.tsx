@@ -6,10 +6,12 @@ import {
     TextInput,
     Pressable,
     Alert,
+    ImageBackground,
 } from "react-native";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../config";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 interface APIResponse<T> {
     status: number;
@@ -64,51 +66,54 @@ export default function Login() {
     }
 
     return (
-        <View style={styles.container}>
-            <Pressable style={styles.noButton} onPress={goToFirstPage}>
-                <Text style={styles.mainPageText}>Go Back</Text>
-            </Pressable>
+        <ImageBackground
+            source={require("../assets/images/friendsbg3.jpg")}
+            style={styles.background}
+        >
+            <View style={styles.container}>
+                <Pressable style={styles.noButton} onPress={goToFirstPage}>
+                    <FontAwesome name="chevron-left" size={24} color="black" />
+                </Pressable>
 
-            <Text style={styles.title}>Login Page</Text>
+                <Text style={styles.title}>Login Page</Text>
 
-            <Text style={styles.text}>Nickname:</Text>
-            <TextInput
-                style={styles.input}
-                onChangeText={setNickname}
-                placeholder={"Enter a nickname..."}
-                value={nickname}
-            />
+                <TextInput
+                    style={styles.input}
+                    onChangeText={setNickname}
+                    placeholder={"Enter a nickname..."}
+                    value={nickname}
+                />
 
-            <Text style={styles.text}>Email:</Text>
-            <TextInput
-                style={styles.input}
-                onChangeText={setEmail}
-                placeholder={"Enter an email..."}
-                value={email}
-            />
+                <TextInput
+                    style={styles.input}
+                    onChangeText={setEmail}
+                    placeholder={"Enter an email..."}
+                    value={email}
+                />
 
-            <Text style={styles.text}>Password:</Text>
-            <TextInput
-                style={styles.input}
-                onChangeText={setPassword}
-                placeholder={"Enter a password..."}
-                secureTextEntry={true}
-                value={password}
-            />
+                <TextInput
+                    style={styles.input}
+                    onChangeText={setPassword}
+                    placeholder={"Enter a password..."}
+                    secureTextEntry={true}
+                    value={password}
+                />
 
-            {/* Login button remains the same */}
-            <Pressable style={styles.button} onPress={login}>
-                <Text style={styles.buttontext}>Login</Text>
-            </Pressable>
-        </View>
+                <Pressable style={styles.button} onPress={login}>
+                    <Text style={styles.buttontext}>Login</Text>
+                </Pressable>
+            </View>
+        </ImageBackground>
     );
 }
 
 const styles = StyleSheet.create({
-    // Keep your original styles
+    background: {
+        flex: 1,
+        resizeMode: "cover",
+    },
     container: {
         flex: 1,
-        backgroundColor: "#25292e",
         justifyContent: "center",
         alignItems: "center",
     },
@@ -123,10 +128,10 @@ const styles = StyleSheet.create({
         textDecorationLine: "underline",
     },
     title: {
-        color: "#9eb7ef",
+        color: "#3498db",
         fontSize: 30,
         marginBottom: 20,
-        textDecorationLine: "underline",
+        fontWeight: "bold",
     },
     text: {
         marginTop: 5,
@@ -145,8 +150,8 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     button: {
-        marginTop: 20,
-        backgroundColor: "#9eb7ef",
+        marginTop: 15,
+        backgroundColor: "#3498db",
         alignItems: "center",
         justifyContent: "center",
         width: 140,

@@ -6,9 +6,11 @@ import {
     TextInput,
     Pressable,
     Alert,
+    ImageBackground,
 } from "react-native";
 import { router } from "expo-router";
 import { API_URL } from "../config";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 interface APIResponse<T> {
     status: number;
@@ -70,78 +72,82 @@ export default function Register() {
     }
 
     return (
-        <View style={styles.container}>
-            <Pressable style={styles.noButton} onPress={goToFirstPage}>
-                <Text style={styles.mainPageText}>Go back</Text>
-            </Pressable>
+        <ImageBackground
+            source={require("../assets/images/friendsbg3.jpg")}
+            style={styles.background}
+        >
+            <View style={styles.container}>
+                <Pressable style={styles.noButton} onPress={goToFirstPage}>
+                    <FontAwesome name="chevron-left" size={24} color="black" />
+                </Pressable>
 
-            <Text style={styles.title}>Register Page</Text>
+                <Text style={styles.title}>Register Page</Text>
 
-            <Text style={styles.text}>Name:</Text>
-            <TextInput
-                style={styles.input}
-                onChangeText={(x) => setName(x)}
-                placeholder={"Enter a name..."}
-                value={name}
-            />
+                <TextInput
+                    style={styles.input}
+                    onChangeText={(x) => setName(x)}
+                    placeholder={"Enter a name..."}
+                    value={name}
+                />
 
-            <Text style={styles.text}>Lastname:</Text>
-            <TextInput
-                style={styles.input}
-                onChangeText={(x) => setLastname(x)}
-                placeholder={"Enter a lastname..."}
-                value={lastname}
-            />
+                <TextInput
+                    style={styles.input}
+                    onChangeText={(x) => setLastname(x)}
+                    placeholder={"Enter a lastname..."}
+                    value={lastname}
+                />
 
-            <Text style={styles.text}>Nickname:</Text>
-            <TextInput
-                style={styles.input}
-                onChangeText={(x) => setNickname(x)}
-                placeholder={"Enter a nickname..."}
-                value={nickname}
-            />
+                <TextInput
+                    style={styles.input}
+                    onChangeText={(x) => setNickname(x)}
+                    placeholder={"Enter a nickname..."}
+                    value={nickname}
+                />
 
-            <Text style={styles.text}>Email:</Text>
-            <TextInput
-                style={styles.input}
-                onChangeText={(x) => setEmail(x)}
-                placeholder={"Enter an email..."}
-                value={email}
-            />
+                <TextInput
+                    style={styles.input}
+                    onChangeText={(x) => setEmail(x)}
+                    placeholder={"Enter an email..."}
+                    value={email}
+                />
 
-            <Text style={styles.text}>Password:</Text>
-            <TextInput
-                style={styles.input}
-                onChangeText={(x) => setPassword(x)}
-                placeholder={"Enter a password..."}
-                secureTextEntry={true}
-                value={password}
-            />
+                <TextInput
+                    style={styles.input}
+                    onChangeText={(x) => setPassword(x)}
+                    placeholder={"Enter a password..."}
+                    secureTextEntry={true}
+                    value={password}
+                />
 
-            <Pressable style={styles.button} onPress={register}>
-                <Text style={styles.buttontext}>Register</Text>
-            </Pressable>
-        </View>
+                <Pressable style={styles.button} onPress={register}>
+                    <Text style={styles.buttontext}>Register</Text>
+                </Pressable>
+            </View>
+        </ImageBackground>
     );
 }
 
 const styles = StyleSheet.create({
+    background: {
+        flex: 1,
+        resizeMode: "cover",
+    },
     container: {
         flex: 1,
-        backgroundColor: "#25292e",
         justifyContent: "center",
         alignItems: "center",
     },
     title: {
-        color: "#55af55",
+        color: "#4CAF50",
         fontSize: 30,
         marginBottom: 20,
-        textDecorationLine: "underline",
+        fontWeight: "bold",
     },
     text: {
         marginTop: 5,
-        fontSize: 15,
+        fontSize: 17,
         color: "white",
+        fontWeight: "bold",
     },
     input: {
         marginTop: 10,
@@ -155,11 +161,11 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     button: {
-        marginTop: 20,
-        backgroundColor: "#55af55",
+        marginTop: 15,
+        backgroundColor: "#4CAF50",
         alignItems: "center",
         justifyContent: "center",
-        width: 100,
+        width: 140,
         height: 40,
         borderRadius: 10,
     },
