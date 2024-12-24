@@ -115,7 +115,7 @@ export default function NewMessageBox() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#25292e",
+        backgroundColor: "#d8cfc8",
         padding: 20,
     },
     title: {

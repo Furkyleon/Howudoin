@@ -93,6 +93,7 @@ export default function FriendMessages() {
 
             const result = await response.json();
             if (result.status === 1) {
+                // @ts-ignore
                 setMessages((prevMessages) => [...prevMessages, message]);
                 setNewMessage("");
             } else {
@@ -159,7 +160,7 @@ export default function FriendMessages() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#25292e",
+        backgroundColor: "#d8cfc8",
         padding: 20,
     },
     title: {

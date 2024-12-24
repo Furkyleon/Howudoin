@@ -140,12 +140,15 @@ export default function Groups() {
     };
 
     const renderGroup = ({ item }: { item: Group }) => (
-        <Pressable style={styles.groupContainer} onPress={() => fetchGroupDetails(item.id)}>
+        <View style={styles.groupContainer}>
             <View style={styles.groupContent}>
                 <FontAwesome size={20} name="group" color={"black"} />
                 <Text style={styles.groupName}>{item.name}</Text>
             </View>
-        </Pressable>
+            <Pressable onPress={() => fetchGroupDetails(item.id)}>
+                <FontAwesome size={20} name="info-circle" color={"black"} />
+            </Pressable>
+        </View>
     );
 
     return (
@@ -216,7 +219,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 20,
-        paddingTop: 30,
+        paddingTop: 50,
     },
     header: {
         flexDirection: "row",
@@ -252,8 +255,9 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         flexDirection: "row",
         alignItems: "center",
-        alignSelf: "center",
+        justifyContent: "space-between",
         width: "90%",
+        alignSelf: "center",
     },
     groupContent: {
         flexDirection: "row",

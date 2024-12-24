@@ -177,7 +177,7 @@ export default function FriendRequests() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#25292e",
+        backgroundColor: "#d8cfc8",
         paddingTop: 30,
         paddingHorizontal: 20,
     },
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     title: {
-        color: "#9eb7ef",
+        color: "blue",
         fontSize: 24,
         marginBottom: 20,
         fontWeight: "bold",

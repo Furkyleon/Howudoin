@@ -210,9 +210,9 @@ export default function CreateGroup() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#25292e",
+        backgroundColor: "#d8cfc8",
         paddingHorizontal: 20,
-        paddingTop: 30,
+        paddingTop: 50,
     },
     backButton: {
         position: "absolute",
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
         textDecorationLine: "underline",
     },
     title: {
-        color: "#9eb7ef",
+        color: "blue",
         fontSize: 24,
         marginBottom: 20,
         fontWeight: "bold",
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     sectionTitle: {
-        color: "#9eb7ef",
+        color: "blue",
         fontSize: 18,
         marginBottom: 10,
     },
