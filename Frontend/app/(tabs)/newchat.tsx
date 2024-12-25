@@ -28,7 +28,6 @@ export default function NewMessageBox() {
 
     const fetchFriends = async () => {
         try {
-            console.log("Fetching friends..."); // Debug
             const token = await getToken();
             const storedNickname = await AsyncStorage.getItem("nickname");
 
@@ -39,7 +38,6 @@ export default function NewMessageBox() {
                 return;
             }
 
-            console.log("Stored nickname:", storedNickname); // Debug
             const response = await fetch(`${API_URL}/friends?nickname=${storedNickname}`, {
                 method: "GET",
                 headers: {
@@ -47,8 +45,6 @@ export default function NewMessageBox() {
                     "Content-Type": "application/json",
                 },
             });
-
-            console.log("Friends API Response status:", response.status);
 
             if (!response.ok) {
                 const errorText = await response.text();
@@ -71,7 +67,6 @@ export default function NewMessageBox() {
         }
     };
 
-    // Handle starting a chat with a friend
     const handleStartChat = (friend: string) => {
         router.push({
             pathname: "./friendmessages",

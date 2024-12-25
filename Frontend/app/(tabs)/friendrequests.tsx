@@ -120,12 +120,10 @@ export default function FriendRequests() {
             const result: APIResponse<string> = await response.json();
             Alert.alert("Response", result.message || "Friend request accepted.");
 
-            // Remove the accepted request from the local state
             setRequests((prevRequests) =>
                 prevRequests.filter((request) => request.sender !== sender)
             );
 
-            // Refresh requests from backend to ensure consistency
             await fetchRequests();
         } catch (error: any) {
             console.error("Accept Friend Request Error:", error);

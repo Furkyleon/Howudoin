@@ -72,8 +72,6 @@ export default function AddFriend() {
             if (result.status === 1) {
                 Alert.alert("Success", result.message || "Friend request sent!");
                 setFriendNickname("");
-
-                router.push("/friends");
             } else {
                 Alert.alert("Error", result.data || "Failed to send friend request.");
             }
