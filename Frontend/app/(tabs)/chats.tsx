@@ -76,7 +76,6 @@ export default function MainPage() {
                 setChatPartners(uniquePartners);
             } else {
                 setChatPartners([]);
-                Alert.alert("Info", result.message || "No chats found.");
             }
 
             // Fetch group chats
@@ -98,7 +97,6 @@ export default function MainPage() {
                 setGroups(groupResult.data);
             } else {
                 setGroups([]);
-                Alert.alert("Info", groupResult.message || "No groups found.");
             }
         } catch (error) {
             console.error("Fetch Chats Error:", error);
@@ -156,43 +154,50 @@ export default function MainPage() {
                     </View>
                 ) : (
                     <View style={{ flex: 1 }}>
-                        <FlatList
-                            data={[...chatPartners, ...groups.map((group) => `group-${group.id}`)]}
-                            keyExtractor={(item, index) => `${item}-${index}`}
-                            renderItem={({ item }) => {
-                                if (item.startsWith("group-")) {
-                                    const groupId = parseInt(item.split("-")[1], 10);
-                                    const group = groups.find((g) => g.id === groupId);
+                        {chatPartners.length === 0 && groups.length === 0 ? (
+                            <Text style={styles.noChats}>No chats found.</Text>
+                        ) : (
+                            <FlatList
+                                contentContainerStyle={{ paddingBottom: 80 }}
+                                data={[...chatPartners, ...groups.map((group) => `group-${group.id}`)]}
+                                keyExtractor={(item, index) => `${item}-${index}`}
+                                renderItem={({ item }) => {
+                                    if (item.startsWith("group-")) {
+                                        const groupId = parseInt(item.split("-")[1], 10);
+                                        const group = groups.find((g) => g.id === groupId);
+                                        return (
+                                            <Pressable
+                                                style={styles.chatContainer}
+                                                onPress={() =>
+                                                    group && handleOpenGroup(group.id, group.name)
+                                                }
+                                            >
+                                                <View style={styles.chatText}>
+                                                    <FontAwesome size={20} name="group" color={"blue"} />
+                                                    <Text style={styles.chatGroup}>{group?.name}</Text>
+                                                </View>
+                                            </Pressable>
+                                        );
+                                    }
                                     return (
                                         <Pressable
                                             style={styles.chatContainer}
-                                            onPress={() =>
-                                                group && handleOpenGroup(group.id, group.name)
-                                            }
+                                            onPress={() => handleOpenChat(item)}
                                         >
-                                            <View style={styles.chatText}>
-                                                <FontAwesome size={20} name="group" color={"blue"} />
-                                                <Text style={styles.chatGroup}>{group?.name}</Text>
+                                            <View style={styles.chatText2}>
+                                                <FontAwesome size={20} name="user" color={"red"} />
+                                                <Text style={styles.chatFriend}>{item}</Text>
                                             </View>
                                         </Pressable>
                                     );
-                                }
-                                return (
-                                    <Pressable
-                                        style={styles.chatContainer}
-                                        onPress={() => handleOpenChat(item)}
-                                    >
-                                        <View style={styles.chatText2}>
-                                            <FontAwesome size={20} name="user" color={"red"} />
-                                            <Text style={styles.chatFriend}>{item}</Text>
-                                        </View>
-                                    </Pressable>
-                                );
-                            }}
-                        />
-                        <Pressable style={styles.newChatButton} onPress={handleNewChat}>
-                            <Text style={styles.newChatButtonText}>New Chat</Text>
-                        </Pressable>
+                                }}
+                            />
+                        )}
+                        <View style={styles.footer}>
+                            <Pressable style={styles.newChatButton} onPress={handleNewChat}>
+                                <Text style={styles.newChatButtonText}>New Chat</Text>
+                            </Pressable>
+                        </View>
                     </View>
                 )}
             </View>
@@ -272,7 +277,13 @@ const styles = StyleSheet.create({
         marginTop: 15,
         width: "50%",
         marginBottom: 15,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 10,
+        elevation: 15,
     },
+
     newChatButtonText: {
         color: "white",
         fontSize: 16,
@@ -281,6 +292,21 @@ const styles = StyleSheet.create({
     loadingContainer: {
         flex: 1,
         justifyContent: "center",
+        alignItems: "center",
+    },
+    noChats: {
+        color: "white",
+        fontSize: 20,
+        textAlign: "center",
+        marginTop: 20,
+        fontWeight: "bold",
+        marginBottom: 20,
+    },
+    footer: {
+        position: "absolute",
+        bottom: 20,
+        alignSelf: "center",
+        width: "100%",
         alignItems: "center",
     },
 });

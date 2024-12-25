@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     View,
     Text,
@@ -12,6 +12,7 @@ import {
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../../config";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 interface APIResponse<T> {
     status: number;
@@ -151,20 +152,24 @@ export default function CreateGroup() {
     const renderFriend = ({ item }: { item: string }) => (
         <View style={styles.friendContainer}>
             <Text style={styles.friendName}>{item}</Text>
-            <Button title="Add" onPress={() => addToGroup(item)} />
+            <Pressable onPress={() => addToGroup(item)}>
+                <FontAwesome size={25} name="plus-circle" color={"black"} />
+            </Pressable>
         </View>
     );
 
+    function goBack() {
+        router.push("/(tabs)/groups");
+    }
+
     return (
         <View style={styles.container}>
-            <Pressable
-                style={styles.backButton}
-                onPress={() => router.push("/groups")}
-            >
-                <Text style={styles.mainPageText}>Go Back</Text>
-            </Pressable>
-
-            <Text style={styles.title}>Create a Group</Text>
+            <View style={styles.header}>
+                <Pressable style={styles.backButton} onPress={goBack}>
+                    <FontAwesome name="chevron-left" size={23} color="black" />
+                </Pressable>
+                <Text style={styles.title}>Create a Group {" "}</Text>
+            </View>
 
             <TextInput
                 style={styles.input}
@@ -174,35 +179,38 @@ export default function CreateGroup() {
                 placeholderTextColor="#666"
             />
 
-            <Text style={styles.sectionTitle}>Friends List</Text>
-            {loading ? (
-                <Text style={styles.loadingText}>Loading friends...</Text>
-            ) : friends.length === 0 ? (
-                <Text style={styles.noFriends}>No friends found.</Text>
-            ) : (
-                <FlatList
-                    data={friends}
-                    keyExtractor={(item, index) => `${index}-${item}`}
-                    renderItem={renderFriend}
-                />
-            )}
-
-            <View style={styles.membersContainer}>
-                <Text style={styles.sectionTitle}>Group Members:</Text>
-                {groupMembers.length === 0 ? (
-                    <Text style={styles.noMembers}>No members added yet.</Text>
-                ) : (
-                    groupMembers.map((member, index) => (
-                        <Text key={index} style={styles.memberName}>
-                            {member}
-                        </Text>
-                    ))
-                )}
-            </View>
-
             <Pressable style={styles.createButton} onPress={handleCreateGroup}>
                 <Text style={styles.createButtonText}>Create Group</Text>
             </Pressable>
+
+            <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>Choose friend(s) to add:</Text>
+                {loading ? (
+                    <Text style={styles.loadingText}>Loading friends...</Text>
+                ) : friends.length === 0 ? (
+                    <Text style={styles.noFriends}>No friends found.</Text>
+                ) : (
+                    <FlatList
+                        data={friends}
+                        keyExtractor={(item, index) => `${index}-${item}`}
+                        renderItem={renderFriend}
+                        style={styles.friendsList}
+                    />
+                )}
+
+                <View style={styles.membersContainer}>
+                    <Text style={styles.sectionTitle}>Added friend(s) to group:</Text>
+                    {groupMembers.length === 0 ? (
+                        <Text style={styles.noMembers}>No members added yet.</Text>
+                    ) : (
+                        groupMembers.map((member, index) => (
+                            <View key={index} style={styles.friendContainer}>
+                                <Text style={styles.friendName}>{member}</Text>
+                            </View>
+                        ))
+                    )}
+                </View>
+            </View>
         </View>
     );
 }
@@ -214,10 +222,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingTop: 50,
     },
+    header: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 40,
+    },
     backButton: {
-        position: "absolute",
-        top: 40,
-        left: 20,
+        justifyContent: "center",
     },
     mainPageText: {
         color: "white",
@@ -225,27 +237,32 @@ const styles = StyleSheet.create({
         textDecorationLine: "underline",
     },
     title: {
-        color: "blue",
-        fontSize: 24,
-        marginBottom: 20,
-        fontWeight: "bold",
+        fontSize: 30,
+        color: "#333",
         alignSelf: "center",
+        fontWeight: "bold",
+        textAlign: "center",
+        flex: 1,
     },
     input: {
-        backgroundColor: "#333",
+        backgroundColor: "white",
         borderRadius: 10,
         height: 40,
         paddingHorizontal: 10,
-        color: "white",
-        marginBottom: 20,
+        marginBottom: 30,
         borderWidth: 1,
         borderColor: "#555",
+        alignItems: "center",
+        justifyContent: "center",
+        alignSelf: "center",
         textAlign: "center",
+        width: "90%",
     },
     sectionTitle: {
         color: "blue",
-        fontSize: 18,
-        marginBottom: 10,
+        fontSize: 20,
+        marginBottom: 20,
+        textDecorationLine: "underline",
     },
     loadingText: {
         color: "white",
@@ -255,38 +272,39 @@ const styles = StyleSheet.create({
     noFriends: {
         color: "white",
         textAlign: "center",
-        fontSize: 16,
+        fontSize: 18,
+        fontWeight: "bold",
     },
     friendContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: "#333",
+        backgroundColor: "white",
         padding: 10,
         borderRadius: 10,
         marginBottom: 10,
+        width: "60%",
     },
     friendName: {
-        color: "white",
+        color: "#616161",
         fontSize: 16,
-    },
-    membersContainer: {
-        marginTop: 20,
+        marginLeft: 5,
+        fontWeight: "bold",
     },
     memberName: {
-        color: "white",
+        color: "#616161",
         fontSize: 16,
         marginBottom: 5,
     },
     noMembers: {
         color: "white",
-        fontSize: 16,
+        fontSize: 18,
         textAlign: "center",
+        fontWeight: "bold",
     },
     createButton: {
-        marginTop: 15,
-        marginBottom: 15,
-        backgroundColor: "#55af55",
+        marginBottom: 30,
+        backgroundColor: "#3498db",
         borderRadius: 10,
         alignItems: "center",
         justifyContent: "center",
@@ -298,5 +316,15 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 16,
         fontWeight: "bold",
+    },
+
+    sectionContainer: {
+        marginTop: 20,
+    },
+    friendsList: {
+        marginBottom: 20, // Add some spacing between the friends list and the added members section
+    },
+    membersContainer: {
+        marginTop: 10, // Pull this closer to the "Choose friend(s) to add" section
     },
 });

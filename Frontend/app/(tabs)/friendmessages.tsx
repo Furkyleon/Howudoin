@@ -7,11 +7,12 @@ import {
     StyleSheet,
     ScrollView,
     Alert,
-    ActivityIndicator,
+    ActivityIndicator, Pressable,
 } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import {router, useLocalSearchParams} from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../../config";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 interface Message {
     id: number;
@@ -118,11 +119,19 @@ export default function FriendMessages() {
         };
     }, [friend]);
 
-
+    function goBack() {
+        router.push("/(tabs)/chats");
+    }
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Chat with {friend}</Text>
+            <View style={styles.header}>
+                <Pressable style={styles.backButton} onPress={goBack}>
+                    <FontAwesome name="chevron-left" size={23} color="black" />
+                </Pressable>
+                <Text style={styles.title}>{friend + "  "}</Text>
+            </View>
+
             <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
                 {messages.length > 0 ? (
                     messages.map((message, index) => (
@@ -151,7 +160,9 @@ export default function FriendMessages() {
                     placeholder="Type a message"
                     placeholderTextColor="gray"
                 />
-                <Button title="Send" onPress={handleSendMessage} />
+                <Pressable onPress={handleSendMessage}>
+                    <FontAwesome size={25} name="send" color={"black"} />
+                </Pressable>
             </View>
         </View>
     );
@@ -161,14 +172,23 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#d8cfc8",
-        padding: 20,
+        paddingHorizontal: 20,
+        paddingTop: 50,
+        paddingBottom: 20,
+    },
+    header: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 30,
     },
     title: {
-        fontSize: 20,
-        color: "white",
-        marginBottom: 20,
+        fontSize: 28,
+        color: "#333",
         alignSelf: "center",
-        marginTop: 40,
+        fontWeight: "bold",
+        textAlign: "center",
+        flex: 1,
     },
     scrollContainer: {
         flex: 1,
@@ -182,11 +202,11 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     messageRight: {
-        backgroundColor: "#4caf50",
+        backgroundColor: "#7bc87f",
         alignSelf: "flex-end",
     },
     messageLeft: {
-        backgroundColor: "#333",
+        backgroundColor: "#aeaeae",
         alignSelf: "flex-start",
     },
     messageText: {
@@ -194,7 +214,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     messageSender: {
-        color: "gray",
+        color: "#fff1f1",
         fontSize: 12,
         marginTop: 5,
     },
@@ -202,11 +222,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
+        marginTop: 10,
     },
     input: {
         flex: 1,
-        backgroundColor: "#333",
-        color: "white",
+        backgroundColor: "white",
+        color: "black",
         padding: 10,
         borderRadius: 10,
         marginRight: 10,
@@ -221,5 +242,9 @@ const styles = StyleSheet.create({
         color: "gray",
         textAlign: "center",
         marginTop: 20,
+        fontSize: 17,
+    },
+    backButton: {
+        justifyContent: "center",
     },
 });

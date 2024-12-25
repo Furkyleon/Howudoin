@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     View,
     Text,
@@ -10,6 +10,7 @@ import {
 import { router, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../../config";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 interface APIResponse<T> {
     status: number;
@@ -85,17 +86,19 @@ export default function AddFriend() {
         }
     }
 
-    function goToFriends() {
-        router.push("/friends");
+
+    function goBack() {
+        router.push("/(tabs)/friends");
     }
 
     return (
         <View style={styles.container}>
-            <Pressable style={styles.noButton} onPress={goToFriends}>
-                <Text style={styles.mainPageText}>Go Back</Text>
-            </Pressable>
-
-            <Text style={styles.title}>Add a Friend</Text>
+            <View style={styles.header}>
+                <Pressable style={styles.backButton} onPress={goBack}>
+                    <FontAwesome name="chevron-left" size={23} color="black" />
+                </Pressable>
+                <Text style={styles.title}>Add a Friend {" "}</Text>
+            </View>
 
             <TextInput
                 style={styles.input}
@@ -116,26 +119,25 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#d8cfc8",
-        paddingTop: 30,
         paddingHorizontal: 20,
+        paddingTop: 50,
+    },
+    header: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 40,
     },
     backButton: {
-        position: "absolute",
-        top: 40,
-        left: 20,
-    },
-    backButtonText: {
-        color: "white",
-        fontSize: 16,
-        textDecorationLine: "underline",
+        justifyContent: "center",
     },
     title: {
-        color: "blue",
-        fontSize: 24,
-        marginBottom: 20,
-        fontWeight: "bold",
+        fontSize: 30,
+        color: "#333",
         alignSelf: "center",
-        marginTop: 40,
+        fontWeight: "bold",
+        textAlign: "center",
+        flex: 1,
     },
     label: {
         color: "white",
@@ -144,15 +146,18 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     input: {
-        backgroundColor: "#333",
+        backgroundColor: "white",
         borderRadius: 10,
         height: 40,
         paddingHorizontal: 10,
-        color: "white",
         marginBottom: 20,
         borderWidth: 1,
         borderColor: "#555",
+        alignItems: "center",
+        justifyContent: "center",
+        alignSelf: "center",
         textAlign: "center",
+        width: "90%",
     },
     addButton: {
         marginBottom: 15,

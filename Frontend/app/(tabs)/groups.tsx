@@ -158,7 +158,7 @@ export default function Groups() {
         >
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>{"  "} Groups</Text>
+                    <Text style={styles.title}>{" "} Groups</Text>
                     <Pressable style={styles.logoutButton} onPress={handleLogout}>
                         <FontAwesome size={28} name="sign-out" color={"black"} />
                     </Pressable>
@@ -168,19 +168,27 @@ export default function Groups() {
                     <View style={styles.loadingContainer}>
                         <ActivityIndicator size="large" color="white" />
                     </View>
-                ) : groups.length === 0 ? (
-                    <Text style={styles.noGroups}>No groups found.</Text>
                 ) : (
-                    <FlatList
-                        data={groups}
-                        keyExtractor={(item, index) => `${item.id}-${index}`}
-                        renderItem={renderGroup}
-                    />
+                    <View style={{ flex: 1 }}>
+                        {groups.length === 0 ? (
+                            <Text style={styles.noGroups}>No groups found.</Text>
+                        ) : (
+                            <FlatList
+                                contentContainerStyle={{ paddingBottom: 80 }}
+                                data={groups}
+                                keyExtractor={(item, index) => `${item.id}-${index}`}
+                                renderItem={renderGroup}
+                            />
+                        )}
+                    </View>
                 )}
 
-                <Pressable style={styles.createGroupButton} onPress={handleCreateGroup}>
-                    <Text style={styles.createGroupButtonText}>Create Group</Text>
-                </Pressable>
+                <View style={styles.footer}>
+                    <Pressable style={styles.createGroupButton} onPress={handleCreateGroup}>
+                        <Text style={styles.createGroupButtonText}>Create Group</Text>
+                    </Pressable>
+                </View>
+
 
                 {selectedGroup && (
                     <Modal visible={modalVisible} transparent={true} animationType="slide">
@@ -188,11 +196,20 @@ export default function Groups() {
                             <View style={styles.modalContent}>
                                 <Text style={styles.modalTitle}>{selectedGroup.name}</Text>
                                 <Text style={styles.modalText}>
-                                    Created Time: {selectedGroup.createdTime}
+                                    Created Time:
+                                </Text>
+                                <Text style={styles.modalText2}>
+                                    {new Date(selectedGroup.createdTime).toLocaleString("tr-TR", {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                    })}
                                 </Text>
                                 <Text style={styles.modalText}>Members:</Text>
                                 {selectedGroup.members.map((member, index) => (
-                                    <Text key={index} style={styles.modalText}>
+                                    <Text key={index} style={styles.modalText2}>
                                         {member}
                                     </Text>
                                 ))}
@@ -244,9 +261,11 @@ const styles = StyleSheet.create({
     },
     noGroups: {
         color: "white",
-        alignSelf: "center",
-        fontSize: 18,
-        marginTop: 30,
+        fontSize: 20,
+        textAlign: "center",
+        marginTop: 20,
+        fontWeight: "bold",
+        marginBottom: 20,
     },
     groupContainer: {
         backgroundColor: "rgba(255, 255, 255, 0.9)",
@@ -279,6 +298,11 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         width: "50%",
         alignSelf: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 10,
+        elevation: 15,
     },
     createGroupButtonText: {
         color: "white",
@@ -298,11 +322,16 @@ const styles = StyleSheet.create({
         width: "80%",
     },
     modalTitle: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: "bold",
         marginBottom: 10,
     },
     modalText: {
+        fontSize: 14,
+        marginBottom: 5,
+        fontWeight: "bold",
+    },
+    modalText2: {
         fontSize: 14,
         marginBottom: 5,
     },
@@ -312,14 +341,25 @@ const styles = StyleSheet.create({
         backgroundColor: "#9eb7ef",
         borderRadius: 5,
         alignItems: "center",
+        alignSelf: "center",
+        width: "60%",
     },
     closeButtonText: {
-        color: "#25292e",
+        color: "#ffffff",
         fontWeight: "bold",
     },
     loadingContainer: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+    },
+    footer: {
+        position: "absolute",
+        bottom: 20,
+        left: 0,
+        right: 0,
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 20,
     },
 });

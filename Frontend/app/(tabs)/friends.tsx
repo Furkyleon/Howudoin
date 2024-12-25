@@ -119,24 +119,32 @@ export default function Friends() {
                     <View style={styles.loadingContainer}>
                         <ActivityIndicator size="large" color="white" />
                     </View>
-                ) : friends.length === 0 ? (
-                    <Text style={styles.noFriends}>No friends found.</Text>
                 ) : (
-                    <FlatList
-                        data={friends}
-                        keyExtractor={(item, index) => `${index}-${item}`}
-                        renderItem={renderFriend}
-                    />
+                    <View style={{ flex: 1 }}>
+                        {friends.length === 0 ? (
+                            <Text style={styles.noFriends}>No friends found.</Text>
+                        ) : (
+                            <FlatList
+                                contentContainerStyle={{ paddingBottom: 80 }}
+                                data={friends}
+                                keyExtractor={(item, index) => `${index}-${item}`}
+                                renderItem={renderFriend}
+                            />
+                        )}
+                    </View>
                 )}
 
-                <View style={styles.buttonRow}>
-                    <Pressable style={styles.addButton} onPress={handleAddFriend}>
-                        <Text style={styles.addButtonText}>Add Friend</Text>
-                    </Pressable>
-                    <Pressable style={styles.requestsButton} onPress={handleFriendRequests}>
-                        <Text style={styles.requestsButtonText}>Friend Requests</Text>
-                    </Pressable>
+                <View style={styles.footer}>
+                    <View style={styles.buttonRow}>
+                        <Pressable style={styles.addButton} onPress={handleAddFriend}>
+                            <Text style={styles.addButtonText}>Add Friend</Text>
+                        </Pressable>
+                        <Pressable style={styles.requestsButton} onPress={handleFriendRequests}>
+                            <Text style={styles.requestsButtonText}>Friend Requests</Text>
+                        </Pressable>
+                    </View>
                 </View>
+
             </View>
         </ImageBackground>
     );
@@ -175,9 +183,11 @@ const styles = StyleSheet.create({
     },
     noFriends: {
         color: "white",
-        alignSelf: "center",
-        fontSize: 18,
-        marginTop: 30,
+        fontSize: 20,
+        textAlign: "center",
+        marginTop: 20,
+        fontWeight: "bold",
+        marginBottom: 20,
     },
     friendContainer: {
         backgroundColor: "rgba(255, 255, 255, 0.9)",
@@ -204,6 +214,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         marginTop: 15,
         marginBottom: 15,
+        gap: 10,
     },
     addButton: {
         backgroundColor: "#4CAF50",
@@ -212,6 +223,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         width: "48%",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 10,
+        elevation: 15,
     },
     addButtonText: {
         color: "white",
@@ -225,6 +241,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         width: "48%",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.5,
+        shadowRadius: 10,
+        elevation: 15,
     },
     requestsButtonText: {
         color: "white",
@@ -235,5 +256,14 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
+    },
+    footer: {
+        position: "absolute",
+        bottom: 20,
+        left: 0,
+        right: 0,
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 20,
     },
 });

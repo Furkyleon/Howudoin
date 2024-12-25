@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     View,
     Text,
@@ -12,6 +12,7 @@ import {
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../../config";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 interface APIResponse<T> {
     status: number;
@@ -149,17 +150,18 @@ export default function FriendRequests() {
         );
     }
 
-    const goToFriends = () => {
-        router.push("/friends");
-    };
+    function goBack() {
+        router.push("/(tabs)/friends");
+    }
 
     return (
         <View style={styles.container}>
-            <Pressable style={styles.noButton} onPress={goToFriends}>
-                <Text style={styles.mainPageText}>Go Back</Text>
-            </Pressable>
-
-            <Text style={styles.title}>Friend Requests</Text>
+            <View style={styles.header}>
+                <Pressable style={styles.backButton} onPress={goBack}>
+                    <FontAwesome name="chevron-left" size={23} color="black" />
+                </Pressable>
+                <Text style={styles.title}>Friend Requests {" "}</Text>
+            </View>
 
             {requests.length === 0 ? (
                 <Text style={styles.noRequests}>No friend requests.</Text>
@@ -178,8 +180,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#d8cfc8",
-        paddingTop: 30,
         paddingHorizontal: 20,
+        paddingTop: 50,
+    },
+    header: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 40,
     },
     loadingContainer: {
         flex: 1,
@@ -188,18 +196,18 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     title: {
-        color: "blue",
-        fontSize: 24,
-        marginBottom: 20,
-        fontWeight: "bold",
+        fontSize: 30,
+        color: "#333",
         alignSelf: "center",
-        marginTop: 40,
+        fontWeight: "bold",
+        textAlign: "center",
+        flex: 1,
     },
     noRequests: {
         color: "white",
-        alignSelf: "center",
-        marginTop: 30,
-        fontSize: 18,
+        fontSize: 20,
+        textAlign: "center",
+        marginTop: 20,
     },
     requestContainer: {
         backgroundColor: "#333",
@@ -221,5 +229,8 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 16,
         textDecorationLine: "underline",
+    },
+    backButton: {
+        justifyContent: "center",
     },
 });

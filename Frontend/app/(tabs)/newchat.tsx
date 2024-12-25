@@ -7,9 +7,10 @@ import {
     StyleSheet,
     Alert,
 } from "react-native";
-import { useRouter } from "expo-router";
+import {router, useRouter} from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../../config";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function NewMessageBox() {
     const router = useRouter();
@@ -87,13 +88,25 @@ export default function NewMessageBox() {
         fetchFriends();
     }, []);
 
+    function goBack() {
+        router.push("/(tabs)/chats");
+    }
+
     // Render the list of friends
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Select a Friend</Text>
+            <View style={styles.header}>
+                <Pressable style={styles.backButton} onPress={goBack}>
+                    <FontAwesome name="chevron-left" size={23} color="black" />
+                </Pressable>
+                <Text style={styles.title}>Select a Friend {" "}</Text>
+            </View>
 
             {friends.length === 0 ? (
-                <Text style={styles.noFriends}>You have no friends to start a chat with.</Text>
+                <View>
+                    <Text style={styles.noFriends1}>You have no friends to</Text>
+                    <Text style={styles.noFriends2}>start a chat with.</Text>
+                </View>
             ) : (
                 <FlatList
                     data={friends}
@@ -116,14 +129,22 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#d8cfc8",
-        padding: 20,
+        paddingHorizontal: 20,
+        paddingTop: 50,
+    },
+    header: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginBottom: 20,
     },
     title: {
-        fontSize: 20,
-        color: "white",
-        marginBottom: 20,
+        fontSize: 30,
+        color: "#333",
         alignSelf: "center",
-        marginTop: 50,
+        fontWeight: "bold",
+        textAlign: "center",
+        flex: 1,
     },
     friendContainer: {
         backgroundColor: "#333",
@@ -136,10 +157,18 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: "bold",
     },
-    noFriends: {
+    noFriends1: {
         color: "white",
-        fontSize: 16,
+        fontSize: 20,
         textAlign: "center",
         marginTop: 20,
+    },
+    noFriends2: {
+        color: "white",
+        fontSize: 20,
+        textAlign: "center",
+    },
+    backButton: {
+        justifyContent: "center",
     },
 });
