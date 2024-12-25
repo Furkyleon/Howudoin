@@ -283,7 +283,6 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 10,
         marginBottom: 10,
-        width: "60%",
     },
     friendName: {
         color: "#616161",
@@ -317,14 +316,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
     },
-
     sectionContainer: {
         marginTop: 20,
     },
     friendsList: {
-        marginBottom: 20, // Add some spacing between the friends list and the added members section
+        marginBottom: 20,
     },
     membersContainer: {
-        marginTop: 10, // Pull this closer to the "Choose friend(s) to add" section
+        marginTop: 10,
     },
 });

@@ -138,7 +138,9 @@ export default function FriendRequests() {
             <Text style={styles.requestText}>
                 {item.sender} wants to be your friend.
             </Text>
-            <Button title="Accept" onPress={() => acceptRequest(item.sender)} />
+            <Pressable style={styles.requestButton} onPress={() => acceptRequest(item.sender)}>
+                <Text style={styles.acceptText}>Accept</Text>
+            </Pressable>
         </View>
     );
 
@@ -210,13 +212,13 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     requestContainer: {
-        backgroundColor: "#333",
+        backgroundColor: "white",
         padding: 15,
         borderRadius: 10,
         marginBottom: 15,
     },
     requestText: {
-        color: "white",
+        color: "#333",
         fontSize: 16,
         marginBottom: 10,
     },
@@ -233,4 +235,12 @@ const styles = StyleSheet.create({
     backButton: {
         justifyContent: "center",
     },
+    requestButton: {
+        alignItems: "center",
+    },
+    acceptText: {
+        marginTop: 10,
+        color: "blue",
+        fontSize: 16,
+    }
 });

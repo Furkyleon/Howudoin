@@ -14,12 +14,11 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function NewMessageBox() {
     const router = useRouter();
-    const [friends, setFriends] = useState<string[]>([]); // Matches the structure from `friends.tsx`
+    const [friends, setFriends] = useState<string[]>([]);
 
     const getToken = async (): Promise<string | null> => {
         try {
             const token = await AsyncStorage.getItem("token");
-            console.log("Retrieved token:", token); // Debugging token retrieval
             return token;
         } catch (error) {
             console.error("Error retrieving token:", error);
@@ -49,35 +48,31 @@ export default function NewMessageBox() {
                 },
             });
 
-            console.log("Friends API Response status:", response.status); // Debug response status
+            console.log("Friends API Response status:", response.status);
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error("Error response text:", errorText); // Debug response body
+                console.error("Error response text:", errorText);
                 throw new Error(`Failed to fetch friends. Status code: ${response.status}`);
             }
 
             const result = await response.json();
-            console.log("Friends API Response:", result); // Debug API response
 
             if (result.status === 1 && Array.isArray(result.data)) {
-                setFriends(result.data); // Store friends as an array of strings
-                console.log("Friends set successfully:", result.data); // Debug
+                setFriends(result.data);
             } else {
                 setFriends([]);
                 Alert.alert("Info", result.message || "No friends found.");
-                console.warn("No friends found:", result.message || "Empty list"); // Debug
             }
         } catch (error) {
             console.error("Fetch Friends Error:", error);
             Alert.alert("Error", "Failed to fetch friends.");
-            setFriends([]); // Transition to empty state on error
+            setFriends([]);
         }
     };
 
     // Handle starting a chat with a friend
     const handleStartChat = (friend: string) => {
-        console.log("Starting chat with:", friend); // Debug
         router.push({
             pathname: "./friendmessages",
             params: { friend },
@@ -92,7 +87,6 @@ export default function NewMessageBox() {
         router.push("/(tabs)/chats");
     }
 
-    // Render the list of friends
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -147,13 +141,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     friendContainer: {
-        backgroundColor: "#333",
+        backgroundColor: "white",
         padding: 15,
         borderRadius: 10,
         marginBottom: 10,
     },
     friendName: {
-        color: "#9eb7ef",
+        color: "#333",
         fontSize: 18,
         fontWeight: "bold",
     },

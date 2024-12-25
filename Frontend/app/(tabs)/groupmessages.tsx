@@ -135,7 +135,7 @@ export default function GroupMessages() {
                 {messages.length > 0 ? (
                     messages.map((message, index) => (
                         <View
-                            key={`${message.id || index}`}
+                            key={message.id ? `message-${message.id}` : `message-${index}-${message.content}`}
                             style={
                                 [
                                     styles.messageBubble,
