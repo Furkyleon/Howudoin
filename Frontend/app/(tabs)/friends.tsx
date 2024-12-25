@@ -34,6 +34,7 @@ export default function Friends() {
             const token = await getToken();
             if (!token) {
                 Alert.alert("Error", "No token found. Please login again.");
+                console.log("Error1");
                 router.push("/login");
                 return;
             }
@@ -75,7 +76,6 @@ export default function Friends() {
     };
 
     const handleLogout = async () => {
-        await AsyncStorage.clear();
         router.push("/login");
     };
 

@@ -50,6 +50,7 @@ export default function Groups() {
             const token = await getToken();
             if (!token) {
                 Alert.alert("Error", "No token found. Please login again.");
+                console.log("Error1");
                 router.push("/login");
                 return;
             }
@@ -96,6 +97,7 @@ export default function Groups() {
             const token = await getToken();
             if (!token) {
                 Alert.alert("Error", "No token found. Please login again.");
+                console.log("Error1");
                 return;
             }
 
@@ -135,7 +137,6 @@ export default function Groups() {
     };
 
     const handleLogout = async () => {
-        await AsyncStorage.clear();
         router.push("/login");
     };
 

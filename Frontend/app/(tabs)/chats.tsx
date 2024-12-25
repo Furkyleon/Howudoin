@@ -41,11 +41,11 @@ export default function MainPage() {
 
             if (!token || !storedNickname) {
                 Alert.alert("Error", "Authentication failed. Please log in again.");
+                console.log("Error1");
                 router.push("/login");
                 return;
             }
 
-            // Fetch personal chats
             const response = await fetch(`${API_URL}/messages`, {
                 method: "GET",
                 headers: {
@@ -78,7 +78,6 @@ export default function MainPage() {
                 setChatPartners([]);
             }
 
-            // Fetch group chats
             const groupResponse = await fetch(`${API_URL}/groups?nickname=${storedNickname}`, {
                 method: "GET",
                 headers: {
@@ -125,7 +124,6 @@ export default function MainPage() {
     };
 
     const handleLogout = async () => {
-        await AsyncStorage.clear();
         router.push("/login");
     };
 

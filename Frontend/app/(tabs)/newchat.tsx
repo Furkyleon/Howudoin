@@ -33,7 +33,6 @@ export default function NewMessageBox() {
 
             if (!token || !storedNickname) {
                 Alert.alert("Error", "Authentication failed. Please log in again.");
-                console.warn("No token or nickname found"); // Debug
                 router.push("/login");
                 return;
             }
@@ -99,7 +98,7 @@ export default function NewMessageBox() {
             ) : (
                 <FlatList
                     data={friends}
-                    keyExtractor={(item, index) => `${index}-${item}`} // Ensure keys are unique
+                    keyExtractor={(item, index) => `${index}-${item}`}
                     renderItem={({ item }) => (
                         <Pressable
                             style={styles.friendContainer}
